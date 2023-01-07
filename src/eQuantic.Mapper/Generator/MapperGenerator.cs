@@ -40,6 +40,7 @@ internal class MapperGenerator : ISourceGenerator
 
             var namespaces = new HashSet<string>
             {
+                "System",
                 mapperInfo.SourceClass.FullNamespace(),
                 mapperInfo.DestinationClass.FullNamespace()
             };
@@ -77,13 +78,7 @@ internal class MapperGenerator : ISourceGenerator
 
                         foreach (var destProperty in destProperties)
                         {
-                            var srcProperty = srcProperties.FirstOrDefault(o =>
-                                o.Name.Equals(destProperty.Name, StringComparison.InvariantCultureIgnoreCase));
-
-                            if (srcProperty == null)
-                                continue;
-                            
-                            code.AppendLine($"destination.{destProperty.Name} = source.{srcProperty.Name};");
+                            WritePropertySet(code, srcProperties, destProperty);
                         }
                         code.AppendLine();
                         code.AppendLine("AfterMap(source, destination);");
@@ -96,6 +91,32 @@ internal class MapperGenerator : ISourceGenerator
         }
     }
 
+    private static void WritePropertySet(CodeWriter code, IEnumerable<IPropertySymbol> srcProperties, IPropertySymbol destProperty)
+    {
+        var srcProperty = srcProperties.FirstOrDefault(o =>
+            o.Name.Equals(destProperty.Name, StringComparison.InvariantCultureIgnoreCase));
+
+        if (srcProperty == null)
+            return;
+
+        if (srcProperty.Type.Name == nameof(String) && 
+            destProperty.Type.Name != nameof(String) && 
+            destProperty.Type.IsValueType)
+        {
+            switch (destProperty.Type.Name)
+            {
+                case nameof(DateTime):
+                    code.AppendLine($"destination.{destProperty.Name} = DateTime.Parse(source.{srcProperty.Name});");
+                    break;
+                default:
+                    code.AppendLine($"destination.{destProperty.Name} = Convert.To{destProperty.Type.Name}(source.{srcProperty.Name});");
+                    break;
+            }
+
+            return;
+        }
+        code.AppendLine($"destination.{destProperty.Name} = source.{srcProperty.Name};");
+    }
     private static string GetMapperClassName(MapperInfo mapperInfo)
     {
         var name = mapperInfo.MapperConfigClass.Name;

@@ -188,8 +188,7 @@ public static class SymbolExtensions
         if (symbol.HasConstructorConstraint)
             factors.Add("new()");
 
-        foreach (var item in symbol.ConstraintTypes)
-            factors.Add(item.TryFullName());
+        factors.AddRange(symbol.ConstraintTypes.Select(item => item.TryFullName())!);
 
         if (factors.Count == 0)
             return null;

@@ -17,7 +17,7 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
 
             var anyClass = (INamedTypeSymbol?)context.SemanticModel.GetDeclaredSymbol(context.Node);
 
-            if (anyClass?.BaseType is not { Name: nameof(MapperConfig), TypeArguments.Length: 2 or 3 }) 
+            if (anyClass?.BaseType is not { Name: "MapperBase", TypeArguments.Length: 2 or 3 }) 
                 return;
             
             var source = anyClass.BaseType.TypeArguments[0];

@@ -2,5 +2,7 @@ namespace eQuantic.Mapper.Sample.Models;
 
 public class ExampleB
 {
-    public string Name { get; set; } 
+    public int Id { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public DateTime Date { get; set; }
 }
