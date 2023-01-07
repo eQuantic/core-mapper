@@ -1,0 +1,36 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper", "src\eQuantic.Mapper\eQuantic.Mapper.csproj", "{0183CC23-E090-4D49-9EDB-DB2FA24EF34C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{28F51E6F-D0A4-44A7-96E9-92EB7FAE0CAE}"
+	ProjectSection(SolutionItems) = preProject
+					.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+		README.md = README.md
+		NuGet.Config = NuGet.Config
+		LICENSE = LICENSE
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{384011EF-95DB-458B-8DF2-FB3BFCFB2529}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper.Sample", "src\eQuantic.Mapper.Sample\eQuantic.Mapper.Sample.csproj", "{46C414D2-032A-497C-BC2D-1C594E889867}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{46C414D2-032A-497C-BC2D-1C594E889867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{46C414D2-032A-497C-BC2D-1C594E889867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{46C414D2-032A-497C-BC2D-1C594E889867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{46C414D2-032A-497C-BC2D-1C594E889867}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
+		{46C414D2-032A-497C-BC2D-1C594E889867} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
+	EndGlobalSection
+EndGlobal
