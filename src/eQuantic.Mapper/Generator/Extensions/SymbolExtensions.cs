@@ -127,18 +127,18 @@ public static class SymbolExtensions
         return symbol.Constructors.Any(c => c.Parameters.Count() == 0);
     }
 
-    public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this INamedTypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol symbol)
     {
         return symbol.GetMembers().OfType<IPropertySymbol>()
             .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters());
     }
 
-    public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this INamedTypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this ITypeSymbol symbol)
     {
         return symbol.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanRead() && !p.HasParameters());
     }
 
-    public static IEnumerable<IPropertySymbol> WritableScalarProperties(this INamedTypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> WritableScalarProperties(this ITypeSymbol symbol)
     {
         return symbol.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanWrite() && !p.HasParameters());
     }

@@ -1,6 +1,6 @@
 using eQuantic.Mapper.Sample.Models;
 
-namespace eQuantic.Mapper.Sample.Configs;
+namespace eQuantic.Mapper.Sample.Mappers;
 
 public class ExampleConfig : MapperConfig<ExampleA, ExampleB>
 {

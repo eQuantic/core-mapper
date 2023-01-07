@@ -16,6 +16,13 @@ internal class CodeWriter
 
     public void AppendLine(string line) => Content.Append(new string('\t', IndentLevel)).AppendLine(line);
     public void AppendLine() => Content.AppendLine();
+
+    public void AppendSummary(string summary)
+    {
+        AppendLine("/// <summary>");
+        AppendLine($"/// {summary}");
+        AppendLine("/// </summary>");
+    }
     public IDisposable BeginScope(string line)
     {
         AppendLine(line);
