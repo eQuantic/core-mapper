@@ -13,9 +13,9 @@ public sealed class MapperGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
-#if DEBUG
-        SpinWait.SpinUntil(() => Debugger.IsAttached);
-#endif 
+// #if DEBUG
+//         SpinWait.SpinUntil(() => Debugger.IsAttached);
+// #endif 
         context.RegisterForSyntaxNotifications(() => new SyntaxReceiver());
     }
 
