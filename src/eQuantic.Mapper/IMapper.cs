@@ -1,11 +1,15 @@
 namespace eQuantic.Mapper;
 
+public interface IMapper
+{
+    
+}
 /// <summary>
 /// Mapper interface
 /// </summary>
 /// <typeparam name="TSource">The type of the source.</typeparam>
 /// <typeparam name="TDestination">The type of the destination.</typeparam>
-public interface IMapper<in TSource, TDestination>
+public interface IMapper<in TSource, TDestination> : IMapper
 {
     /// <summary>
     /// Maps the specified source.
@@ -32,5 +36,5 @@ public interface IMapper<in TSource, TDestination, TContext> : IMapper<TSource, 
     /// <summary>
     /// Gets or sets the value of the context
     /// </summary>
-    TContext Context { get; set; }
+    TContext? Context { get; set; }
 }

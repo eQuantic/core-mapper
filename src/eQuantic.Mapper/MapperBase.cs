@@ -1,13 +1,9 @@
 namespace eQuantic.Mapper;
 
 /// <summary>
-
 /// The mapper base class
-
 /// </summary>
-
 /// <seealso cref="IMapper{TSource, TDestination}"/>
-
 public abstract class MapperBase<TSource, TDestination> : IMapper<TSource, TDestination>
     where TSource : class
     where TDestination : class
@@ -67,5 +63,5 @@ public abstract class MapperBase<TSource, TDestination, TContext> : MapperBase<T
     /// <summary>
     /// Gets or sets the value of the context
     /// </summary>
-    public TContext Context { get; set; }
+    public TContext? Context { get; set; }
 }

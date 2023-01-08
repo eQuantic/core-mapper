@@ -9,7 +9,8 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\eQuantic.Mapper\eQuantic.Mapper.csproj" OutputItemType="Analyzer" />
+      <ProjectReference Include="..\eQuantic.Mapper.Generator\eQuantic.Mapper.Generator.csproj" OutputItemType="Analyzer" />
+      <ProjectReference Include="..\eQuantic.Mapper\eQuantic.Mapper.csproj" />
     </ItemGroup>
 
 </Project>

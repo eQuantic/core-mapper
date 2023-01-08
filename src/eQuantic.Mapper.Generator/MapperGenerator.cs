@@ -8,7 +8,7 @@ using Microsoft.CodeAnalysis.Text;
 namespace eQuantic.Mapper.Generator;
 
 [Generator]
-internal class MapperGenerator : ISourceGenerator
+public sealed class MapperGenerator : ISourceGenerator
 {
     public void Initialize(GeneratorInitializationContext context)
     {
@@ -50,27 +50,27 @@ internal class MapperGenerator : ISourceGenerator
                 code.AppendLine($"using {ns};");
             }
 
-            using (code.BeginScope($"namespace {mapperInfo.MapperConfigClass.FullNamespace()}"))
+            using (code.BeginScope($"namespace {mapperInfo.MapperClass.FullNamespace()}"))
             {
-                using (code.BeginScope($"public partial class {className} : {baseClassName}"))
+                using (code.BeginScope("public partial class {0} : {1}", className, baseClassName))
                 {
                     code.AppendSummary("The mapper factory");
                     code.AppendLine("private readonly IMapperFactory _mapperFactory;");
                     code.AppendLine();
 
-                    using (code.BeginScope($"public {className}(IMapperFactory mapperFactory)"))
+                    using (code.BeginScope("public {0}(IMapperFactory mapperFactory)", className))
                     {
                         code.AppendLine("_mapperFactory = mapperFactory;");
                     }
 
                     code.AppendLine();
 
-                    using (code.BeginScope($"public override {destClassName} Map({srcClassName} source)"))
+                    using (code.BeginScope("public override {0} Map({1} source)", destClassName, srcClassName))
                     {
                         code.AppendLine($"return Map(source, new {destClassName}());");
                     }
 
-                    using (code.BeginScope($"public override {destClassName} Map({srcClassName} source, {destClassName} destination)"))
+                    using (code.BeginScope("public override {0} Map({1} source, {0} destination)", destClassName, srcClassName))
                     {
                         code.AppendLine("destination = BeforeMap(source, destination);");
                         code.AppendLine("if(destination == null) return null;");
@@ -106,10 +106,10 @@ internal class MapperGenerator : ISourceGenerator
             switch (destProperty.Type.Name)
             {
                 case nameof(DateTime):
-                    code.AppendLine($"destination.{destProperty.Name} = DateTime.Parse(source.{srcProperty.Name});");
+                    code.AppendLine("destination.{0} = DateTime.Parse(source.{1});", destProperty.Name, srcProperty.Name);
                     break;
                 default:
-                    code.AppendLine($"destination.{destProperty.Name} = Convert.To{destProperty.Type.Name}(source.{srcProperty.Name});");
+                    code.AppendLine("destination.{0} = Convert.To{1}(source.{2});", destProperty.Name, destProperty.Type.Name, srcProperty.Name);
                     break;
             }
 
@@ -119,7 +119,7 @@ internal class MapperGenerator : ISourceGenerator
     }
     private static string GetMapperClassName(MapperInfo mapperInfo)
     {
-        var name = mapperInfo.MapperConfigClass.Name;
+        var name = mapperInfo.MapperClass.Name;
         if (string.IsNullOrEmpty(name))
             return "Default";
 

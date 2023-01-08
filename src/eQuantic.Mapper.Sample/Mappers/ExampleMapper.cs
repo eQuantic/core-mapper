@@ -1,7 +1,9 @@
+using eQuantic.Mapper.Attributes;
 using eQuantic.Mapper.Sample.Models;
 
 namespace eQuantic.Mapper.Sample.Mappers;
 
-public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
+[Mapper(typeof(ExampleA), typeof(ExampleB))]
+public partial class ExampleMapper : IMapper
 {
 }

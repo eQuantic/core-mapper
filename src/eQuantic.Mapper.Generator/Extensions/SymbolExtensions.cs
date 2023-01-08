@@ -13,22 +13,19 @@ public static class SymbolExtensions
 
         if (prefix != "")
             return prefix + "." + symbol.MetadataName;
-        else
-            return symbol.MetadataName;
+        
+        return symbol.MetadataName;
     }
 
     public static string? TryFullName(this ITypeSymbol? symbol)
     {
-        if (symbol == null)
-            return null;
-
-        if (symbol is IArrayTypeSymbol ats)
-            return $"{ats.ElementType.TryFullName()}[{(new string(',', ats.Rank - 1))}]";
-
-        if (symbol is INamedTypeSymbol nts)
-            return FullName(nts);
-
-        return symbol.Name;
+        return symbol switch
+        {
+            null => null,
+            IArrayTypeSymbol ats => $"{ats.ElementType.TryFullName()}[{(new string(',', ats.Rank - 1))}]",
+            INamedTypeSymbol nts => FullName(nts),
+            _ => symbol.Name
+        };
     }
 
     public static string? TryFullName(this IArrayTypeSymbol? symbol)
@@ -60,7 +57,7 @@ public static class SymbolExtensions
         return symbol.Name + suffix;
     }
 
-    static string NullableToken(this ITypeSymbol symbol)
+    private static string NullableToken(this ITypeSymbol symbol)
     {
         if (symbol.IsValueType || symbol.NullableAnnotation != NullableAnnotation.Annotated)
             return "";
@@ -81,37 +78,37 @@ public static class SymbolExtensions
 
         if (prefix != "")
             return prefix + "." + symbol.Name + suffix + symbol.NullableToken();
-        else
-            return symbol.Name + suffix + symbol.NullableToken();
+        
+        return symbol.Name + suffix + symbol.NullableToken();
     }
 
-    static string CollectTypeArguments(IReadOnlyList<ITypeSymbol> typeArguments)
+    private static string CollectTypeArguments(IReadOnlyList<ITypeSymbol> typeArguments)
     {
         var output = new List<string>();
-        for (var i = 0; i < typeArguments.Count; i++)
+        foreach (var t in typeArguments)
         {
-            switch (typeArguments[i])
+            switch (t)
             {
                 case INamedTypeSymbol nts:
-                    output.Add(FullName(nts));
+                    output.Add(FullName(nts)!);
                     break;
                 case ITypeParameterSymbol tps:
                     output.Add(tps.Name + tps.NullableToken());
                     break;
                 default:
                     throw new NotSupportedException(
-                        $"Cannot generate type name from type argument {typeArguments[i].GetType().FullName}");
+                        $"Cannot generate type name from type argument {t.GetType().FullName}");
             }
         }
 
 
-        return "<" + string.Join(", ", typeArguments) + ">";
+        return "<" + string.Join(", ", output) + ">";
     }
 
     public static string FullNamespace(this ISymbol symbol)
     {
         var parts = new Stack<string>();
-        INamespaceSymbol? iterator = (symbol as INamespaceSymbol) ?? symbol.ContainingNamespace;
+        var iterator = (symbol as INamespaceSymbol) ?? symbol.ContainingNamespace;
         while (iterator != null)
         {
             if (!string.IsNullOrEmpty(iterator.Name))
@@ -124,7 +121,7 @@ public static class SymbolExtensions
 
     public static bool HasDefaultConstructor(this INamedTypeSymbol symbol)
     {
-        return symbol.Constructors.Any(c => c.Parameters.Count() == 0);
+        return symbol.Constructors.Any(c => !c.Parameters.Any());
     }
 
     public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol symbol)
@@ -167,10 +164,9 @@ public static class SymbolExtensions
 
     public static string? TypeConstraintString(this IMethodSymbol symbol)
     {
-        if (!symbol.IsGenericMethod)
-            return null;
-
-        return string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
+        return !symbol.IsGenericMethod ? 
+            null : 
+            string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
     }
 
     public static string? TypeConstraintString(this ITypeParameterSymbol symbol)
