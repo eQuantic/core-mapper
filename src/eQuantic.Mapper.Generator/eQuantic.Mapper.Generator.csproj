@@ -6,21 +6,43 @@
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
         <Version>1.0.0.0</Version>
         <Authors>eQuantic Systems</Authors>
-        <TargetFramework>netstandard2.1</TargetFramework>
+        <TargetFramework>netstandard2.0</TargetFramework>
+        <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         <IsPackable>true</IsPackable>
+        <PackageId>eQuantic.Mapper.Generator</PackageId>
+        <PackageTags>eQuantic;Mapper;Generator;Library</PackageTags>
+        <PackageReleaseNotes>DTOs mapping without reflection</PackageReleaseNotes>
+        <PackageProjectUrl>https://github.com/eQuantic/core-mapper</PackageProjectUrl>
+        <PackageOutputPath>../artifacts/</PackageOutputPath>
+        <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
+        <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
+        <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
+        <GenerateAssemblyCompanyAttribute>false</GenerateAssemblyCompanyAttribute>
+        <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
+        <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
+        <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <RepositoryUrl>https://github.com/eQuantic/core-mapper</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+        <AssemblyVersion>1.0.0.0</AssemblyVersion>
+        <FileVersion>1.0.0.0</FileVersion>
+        <PackageIcon>Icon.png</PackageIcon>
+        <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <LangVersion>latest</LangVersion>
     </PropertyGroup>
 
-    <PropertyGroup Condition="'$(Configuration)'=='Release'">
-        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-        <NoPackageAnalysis>true</NoPackageAnalysis>
-        <DevelopmentDependency>true</DevelopmentDependency>
-        <GenerateNuspecDependsOn>$(GenerateNuspecDependsOn);ReadPackageVersionFromOutputAssembly</GenerateNuspecDependsOn>
+    <PropertyGroup>
+        <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
     </PropertyGroup>
-
+    <ItemGroup>
+        <None Include="Icon.png" Pack="true" PackagePath="Icon.png" />
+        <None Include="Icon_details.png" Pack="true" PackagePath="Icon_details.png" />
+        <None Include="Icon_dialog.png" Pack="true" PackagePath="Icon_dialog.png" />
+        <None Include="Icon_list.png" Pack="true" PackagePath="Icon_list.png" />
+        <None Include="../../LICENSE" Pack="true" PackagePath="" />
+    </ItemGroup>
+    
     <ItemGroup>
         <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.4.0" PrivateAssets="all"/>
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.3" PrivateAssets="all"/>
@@ -33,7 +55,16 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\eQuantic.Mapper\eQuantic.Mapper.csproj" IncludeAssets="none" PrivateAssets="none" ExcludeAssets="all"/>
-        <None Include="$(OutputPath)\eQuantic.Mapper.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false"/>
+        <ProjectReference Include="..\eQuantic.Mapper\eQuantic.Mapper.csproj" GeneratePathProperty="true" PrivateAssets="all" />
+        <None Include="$(OutputPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
+
+    <Target Name="GetDependencyTargetPaths">
+        <ItemGroup>
+            <!-- our local project will not generate path variable so we need to find it from it's own build output-->
+            <!-- I used $(OutputPath) variable because the dependecy has the exact TFM and configuration as the generator 
+                 you might need to add configuration manually -->
+            <TargetPathWithTargetPlatformMoniker Include="..\eQuantic.Mapper\$(OutputPath)\*.dll" IncludeRuntimeDependency="false" />
+        </ItemGroup>
+    </Target>
 </Project>

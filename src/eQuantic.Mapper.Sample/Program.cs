@@ -13,6 +13,7 @@ app.MapGet("/", (IMapperFactory mapperFactory) =>
     var exampleA = new ExampleA
     {
         Id = "1",
+        Name = "Test",
         Date = "2023-01-01"
     };
     var exampleB = mapper.Map(exampleA);

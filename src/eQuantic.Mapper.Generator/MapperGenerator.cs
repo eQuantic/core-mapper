@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using System.Text;
 using System.Text.RegularExpressions;
+using eQuantic.Mapper.Attributes;
 using eQuantic.Mapper.Generator.Extensions;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
@@ -26,7 +27,7 @@ public sealed class MapperGenerator : ISourceGenerator
 
         foreach (var mapperInfo in receiver.Infos)
         {
-            var className = GetMapperClassName(mapperInfo);
+            var className = mapperInfo.MapperClass.Name;
             var srcClassName = mapperInfo.SourceClass.Name;
             var srcProperties = mapperInfo.SourceClass.ReadWriteScalarProperties().ToList();
             var destClassName = mapperInfo.DestinationClass.Name;
@@ -78,7 +79,7 @@ public sealed class MapperGenerator : ISourceGenerator
 
                         foreach (var destProperty in destProperties)
                         {
-                            WritePropertySet(code, srcProperties, destProperty);
+                            WritePropertySet(code, mapperInfo, srcProperties, destProperty);
                         }
                         code.AppendLine();
                         code.AppendLine("AfterMap(source, destination);");
@@ -91,14 +92,35 @@ public sealed class MapperGenerator : ISourceGenerator
         }
     }
 
-    private static void WritePropertySet(CodeWriter code, IEnumerable<IPropertySymbol> srcProperties, IPropertySymbol destProperty)
+    private static void WritePropertySet(CodeWriter code, MapperInfo mapperInfo, IList<IPropertySymbol> srcProperties, IPropertySymbol destProperty)
     {
+        var mapFrom = destProperty.GetAttribute<MapFromAttribute>();
+        var mapFromSrcClass = (INamedTypeSymbol?)mapFrom?.ConstructorArguments[0].Value;
+        var mapFromSrcPropName = (string?)mapFrom?.ConstructorArguments[1].Value;
+        
+        if (mapFromSrcClass != null && mapFromSrcClass.FullName() == mapperInfo.SourceClass.FullName())
+        {
+            var mapFromSrcProperty = srcProperties.FirstOrDefault(o =>
+                o.Name.Equals(mapFromSrcPropName, StringComparison.InvariantCultureIgnoreCase));
+
+            if (mapFromSrcProperty != null)
+            {
+                WritePropertySet(code, mapFromSrcProperty, destProperty);
+                return;
+            }
+        }
+        
         var srcProperty = srcProperties.FirstOrDefault(o =>
             o.Name.Equals(destProperty.Name, StringComparison.InvariantCultureIgnoreCase));
 
         if (srcProperty == null)
             return;
+        
+        WritePropertySet(code, srcProperty, destProperty);
+    }
 
+    private static void WritePropertySet(CodeWriter code, IPropertySymbol srcProperty, IPropertySymbol destProperty)
+    {
         if (srcProperty.Type.Name == nameof(String) && 
             destProperty.Type.Name != nameof(String) && 
             destProperty.Type.IsValueType)
@@ -116,21 +138,5 @@ public sealed class MapperGenerator : ISourceGenerator
             return;
         }
         code.AppendLine($"destination.{destProperty.Name} = source.{srcProperty.Name};");
-    }
-    private static string GetMapperClassName(MapperInfo mapperInfo)
-    {
-        var name = mapperInfo.MapperClass.Name;
-        if (string.IsNullOrEmpty(name))
-            return "Default";
-
-        name = TrimEnd(name, "Config");
-        name = TrimEnd(name, "Configuration");
-        
-        return Regex.IsMatch(name, @"Mapper$") ? name : $"{name}Mapper";
-    }
-
-    private static string TrimEnd(string str, string term)
-    {
-        return Regex.Replace(str, term + @"$", "");
     }
 }

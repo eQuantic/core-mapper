@@ -29,11 +29,19 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
             if (generatedAttr == null)
                 return;
 
-            var source = generatedAttr.ConstructorArguments[0].Value;
-            var destination = generatedAttr.ConstructorArguments[1].Value;
-            var mapperContext = anyClass.BaseType.TypeArguments.Length == 3 ? anyClass.BaseType.TypeArguments[2] : null;
+            var source = (INamedTypeSymbol?)generatedAttr.ConstructorArguments[0].Value;
+
+            if (source == null)
+                return;
             
-            //Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext));
+            var destination = (INamedTypeSymbol?)generatedAttr.ConstructorArguments[1].Value;
+            
+            if (destination == null)
+                return;
+            
+            var mapperContext = generatedAttr.ConstructorArguments.Length == 3 ? (INamedTypeSymbol?)generatedAttr.ConstructorArguments[2].Value : null;
+            
+            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext));
         }
         catch (Exception ex)
         {
@@ -46,11 +54,11 @@ internal class MapperInfo
 {
     public INamedTypeSymbol MapperClass { get; }
 
-    public ITypeSymbol SourceClass { get; }
-    public ITypeSymbol DestinationClass { get; }
-    public ITypeSymbol? ContextClass { get; }
+    public INamedTypeSymbol SourceClass { get; }
+    public INamedTypeSymbol DestinationClass { get; }
+    public INamedTypeSymbol? ContextClass { get; }
     
-    public MapperInfo(INamedTypeSymbol mapperClass, ITypeSymbol sourceClass, ITypeSymbol destinationClass, ITypeSymbol? contextClass)
+    public MapperInfo(INamedTypeSymbol mapperClass, INamedTypeSymbol sourceClass, INamedTypeSymbol destinationClass, INamedTypeSymbol? contextClass)
     {
         MapperClass = mapperClass;
         SourceClass = sourceClass;
