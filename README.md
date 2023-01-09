@@ -35,6 +35,14 @@ public class ExampleB
 
 ### The mapper
 ```csharp
+public class ExampleMapper : MapperBase<ExampleA, ExampleB>
+{
+}
+```
+
+If you want that the mapper to be auto-generated, you need to use the `MapperAttribute` and `partial` definition into the class mapper
+
+```csharp
 [Mapper(typeof(ExampleA), typeof(ExampleB))]
 public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
 {
@@ -45,8 +53,7 @@ public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IMapperFactory, MapperFactory>();
-builder.Services.AddTransient(typeof(IMapper<ExampleA, ExampleB>), typeof(ExampleMapper));
+builder.Services.AddMappers();
 var app = builder.Build();
 
 app.MapGet("/", (IMapperFactory mapperFactory) =>
@@ -63,4 +70,22 @@ app.MapGet("/", (IMapperFactory mapperFactory) =>
 });
 
 app.Run();
+```
+
+### Manual customization
+
+If you need customize the auto-generated mapper, just override `Before` or/and `After` methods:
+
+```csharp
+[Mapper(typeof(ExampleA), typeof(ExampleB))]
+public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
+{
+    public override ExampleB AfterMap(ExampleA source, ExampleB destination)
+    {
+        if(source.Name == "Test")
+            destination.Name = "Empty";
+
+        return destination;
+    }
+}
 ```

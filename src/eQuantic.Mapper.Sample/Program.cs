@@ -1,10 +1,8 @@
 using eQuantic.Mapper;
-using eQuantic.Mapper.Sample.Mappers;
 using eQuantic.Mapper.Sample.Models;
 
 var builder = WebApplication.CreateBuilder(args);
-builder.Services.AddTransient<IMapperFactory, MapperFactory>();
-builder.Services.AddTransient(typeof(IMapper<ExampleA, ExampleB>), typeof(ExampleMapper));
+builder.Services.AddMappers();
 var app = builder.Build();
 
 app.MapGet("/", (IMapperFactory mapperFactory) =>
