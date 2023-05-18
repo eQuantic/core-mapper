@@ -3,6 +3,7 @@ using System.Text;
 
 namespace eQuantic.Mapper.Generator;
 
+[ExcludeFromCodeCoverage]
 internal class CodeWriter
 {
     private StringBuilder Content { get; } = new();
@@ -59,8 +60,6 @@ internal class CodeWriter
     public void StartLine() => Content.Append(new string('\t', IndentLevel));
     public override string ToString() => Content.ToString();
 
-    private string EscapeString(string text) => text.Replace("\"", "\"\"");
-
     private class ScopeTracker : IDisposable
     {
         public ScopeTracker(CodeWriter parent)
@@ -68,10 +67,19 @@ internal class CodeWriter
             Parent = parent;
         }
         public CodeWriter Parent { get; }
+        
+        protected virtual void Dispose(bool disposing)
+        {
+            if (disposing)
+            {
+                Parent.EndScope();
+            }
+        }
 
         public void Dispose()
         {
-            Parent.EndScope();
+            Dispose(true);
+            GC.SuppressFinalize(this);
         }
     }
 }

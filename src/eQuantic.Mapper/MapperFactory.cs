@@ -45,7 +45,9 @@ public class MapperFactory : IMapperFactory
         var service = _serviceProvider.GetService(typeof(IMapper<TSource, TDestination, TContext>));
 
         if (service == null)
+        {
             return null;
+        }
 
         var mapper = (IMapper<TSource, TDestination, TContext>)service;
         mapper.Context = context;

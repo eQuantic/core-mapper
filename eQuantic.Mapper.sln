@@ -20,6 +20,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{BB07FD55
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper.Tests", "tests\eQuantic.Mapper.Tests\eQuantic.Mapper.Tests.csproj", "{2E9F34DB-52F3-4D73-B22F-685685955E74}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper.Generator.Tests", "tests\eQuantic.Mapper.Generator.Tests\eQuantic.Mapper.Generator.Tests.csproj", "{E7398ED9-CC2B-4287-A017-65C888638C0F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -42,11 +44,16 @@ Global
 		{2E9F34DB-52F3-4D73-B22F-685685955E74}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{2E9F34DB-52F3-4D73-B22F-685685955E74}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{2E9F34DB-52F3-4D73-B22F-685685955E74}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E7398ED9-CC2B-4287-A017-65C888638C0F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E7398ED9-CC2B-4287-A017-65C888638C0F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E7398ED9-CC2B-4287-A017-65C888638C0F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E7398ED9-CC2B-4287-A017-65C888638C0F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{0183CC23-E090-4D49-9EDB-DB2FA24EF34C} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
 		{46C414D2-032A-497C-BC2D-1C594E889867} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
 		{9FF598F5-D6B7-47A2-8321-DCAEA5FF6D70} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
 		{2E9F34DB-52F3-4D73-B22F-685685955E74} = {BB07FD55-DEDA-454A-BF18-F3321714EDB4}
+		{E7398ED9-CC2B-4287-A017-65C888638C0F} = {BB07FD55-DEDA-454A-BF18-F3321714EDB4}
 	EndGlobalSection
 EndGlobal

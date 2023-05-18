@@ -1,23 +1,31 @@
+using System.Collections;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace eQuantic.Mapper.Generator.Extensions;
 
+[ExcludeFromCodeCoverage]
 public static class SymbolExtensions
 {
-    public static string? FullMetadataName(this INamedTypeSymbol? symbol)
+    private const int DocLines = 3;
+    public static string? FullMetadataName(this ISymbol? symbol)
     {
         if (symbol == null)
+        {
             return null;
+        }
 
         var prefix = FullNamespace(symbol);
 
         if (prefix != "")
+        {
             return prefix + "." + symbol.MetadataName;
-        
+        }
+
         return symbol.MetadataName;
     }
 
-    public static string? TryFullName(this ITypeSymbol? symbol)
+    public static string? TryFullName(this ISymbol? symbol)
     {
         return symbol switch
         {
@@ -31,43 +39,36 @@ public static class SymbolExtensions
     public static string? TryFullName(this IArrayTypeSymbol? symbol)
     {
         if (symbol == null)
+        {
             return null;
+        }
 
         return $"{symbol.ElementType.TryFullName()}[{(new string(',', symbol.Rank - 1))}]";
     }
 
-    public static string? GetXmlDocs(this ISymbol symbol)
+    public static string? GetXmlDocs(this ISymbol? symbol)
     {
-        var xml = symbol.GetDocumentationCommentXml();
+        var xml = symbol?.GetDocumentationCommentXml();
         if (xml == null)
-            return null;
-
-        var lines = xml.Split(new[] { "\r\n" }, StringSplitOptions.None);
-        return string.Join("\r\n", lines.Skip(1).Take(lines.Length - 3).Select(l => @"/// " + l.Trim()));
-    }
-
-    public static string FullName(this IMethodSymbol symbol)
-    {
-        var suffix = "";
-        if (symbol.Arity > 0)
         {
-            suffix = CollectTypeArguments(symbol.TypeArguments);
+            return null;
         }
 
-        return symbol.Name + suffix;
+        var lines = xml.Split(new[] { "\r\n" }, StringSplitOptions.None);
+        return string.Join("\r\n", lines.Skip(1).Take(lines.Length - DocLines).Select(l => @"/// " + l.Trim()));
     }
 
     private static string NullableToken(this ITypeSymbol symbol)
     {
-        if (symbol.IsValueType || symbol.NullableAnnotation != NullableAnnotation.Annotated)
-            return "";
-        return "?";
+        return symbol.IsNullable() ? "?" : string.Empty;
     }
 
     public static string? FullName(this INamedTypeSymbol? symbol)
     {
         if (symbol == null)
+        {
             return null;
+        }
 
         var prefix = FullNamespace(symbol);
         var suffix = "";
@@ -77,9 +78,27 @@ public static class SymbolExtensions
         }
 
         if (prefix != "")
+        {
             return prefix + "." + symbol.Name + suffix + symbol.NullableToken();
-        
+        }
+
         return symbol.Name + suffix + symbol.NullableToken();
+    }
+    
+    public static string? FullName(this IMethodSymbol? symbol)
+    {
+        if (symbol == null)
+        {
+            return null;
+        }
+        
+        var suffix = "";
+        if (symbol.Arity > 0)
+        {
+            suffix = CollectTypeArguments(symbol.TypeArguments);
+        }
+
+        return symbol.Name + suffix;
     }
 
     private static string CollectTypeArguments(IReadOnlyList<ITypeSymbol> typeArguments)
@@ -105,89 +124,235 @@ public static class SymbolExtensions
         return "<" + string.Join(", ", output) + ">";
     }
 
-    public static string FullNamespace(this ISymbol symbol)
+    public static string? FullNamespace(this ISymbol? symbol)
     {
+        if (symbol == null)
+        {
+            return null;
+        }
+        
         var parts = new Stack<string>();
         var iterator = (symbol as INamespaceSymbol) ?? symbol.ContainingNamespace;
         while (iterator != null)
         {
             if (!string.IsNullOrEmpty(iterator.Name))
+            {
                 parts.Push(iterator.Name);
+            }
+
             iterator = iterator.ContainingNamespace;
         }
 
         return string.Join(".", parts);
     }
 
-    public static bool HasDefaultConstructor(this INamedTypeSymbol symbol)
+    public static bool HasDefaultConstructor(this INamedTypeSymbol? symbol)
     {
-        return symbol.Constructors.Any(c => !c.Parameters.Any());
+        return symbol?.Constructors.Any(c => !c.Parameters.Any()) == true;
     }
 
-    public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol? symbol)
     {
-        return symbol.GetMembers().OfType<IPropertySymbol>()
-            .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters());
+        return symbol?.GetMembers().OfType<IPropertySymbol>()
+            .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
     }
 
-    public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this ITypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this ITypeSymbol? symbol)
     {
-        return symbol.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanRead() && !p.HasParameters());
+        return symbol?.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanRead() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
     }
 
-    public static IEnumerable<IPropertySymbol> WritableScalarProperties(this ITypeSymbol symbol)
+    public static IEnumerable<IPropertySymbol> WritableScalarProperties(this ITypeSymbol? symbol)
     {
-        return symbol.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanWrite() && !p.HasParameters());
+        return symbol?.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanWrite() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
     }
 
-    public static bool CanRead(this IPropertySymbol symbol) => symbol.GetMethod != null;
-    public static bool CanWrite(this IPropertySymbol symbol) => symbol.SetMethod != null;
-    public static bool HasParameters(this IPropertySymbol symbol) => symbol.Parameters.Any();
+    public static bool CanRead(this IPropertySymbol? symbol) => symbol?.GetMethod != null;
+    public static bool CanWrite(this IPropertySymbol? symbol) => symbol?.SetMethod != null;
+    public static bool HasParameters(this IPropertySymbol? symbol) => symbol?.Parameters.Any() == true;
 
-    public static IEnumerable<AttributeData> GetAttributes<TAttribute>(this ISymbol symbol)
+    public static IEnumerable<AttributeData> GetAttributes<TAttribute>(this ISymbol? symbol)
     {
         var fullName = typeof(TAttribute).FullName;
-        return symbol.GetAttributes().Where(att => att.AttributeClass.FullName() == fullName);
+        return symbol?.GetAttributes().Where(att => att.AttributeClass.FullName() == fullName) ?? Array.Empty<AttributeData>();
     }
 
-    public static AttributeData? GetAttribute<TAttribute>(this ISymbol symbol)
+    public static AttributeData? GetAttribute<TAttribute>(this ISymbol? symbol)
     {
         var fullName = typeof(TAttribute).FullName;
-        return symbol.GetAttributes().SingleOrDefault(att => att.AttributeClass.FullName() == fullName);
+        return symbol?.GetAttributes().SingleOrDefault(att => att.AttributeClass.FullName() == fullName);
     }
 
-    public static bool HasAttribute<TAttribute>(this ISymbol symbol)
+    public static bool HasAttribute<TAttribute>(this ISymbol? symbol)
     {
         var fullName = typeof(TAttribute).FullName;
-        return symbol.GetAttributes().Any(att => att.AttributeClass.FullName() == fullName);
+        return symbol?.GetAttributes().Any(att => att.AttributeClass.FullName() == fullName) == true;
     }
 
-    public static string? TypeConstraintString(this IMethodSymbol symbol)
+    public static string? TypeConstraintString(this IMethodSymbol? symbol)
     {
-        return !symbol.IsGenericMethod ? 
+        return symbol?.IsGenericMethod != true ? 
             null : 
             string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
     }
 
-    public static string? TypeConstraintString(this ITypeParameterSymbol symbol)
+    public static string? TypeConstraintString(this ITypeParameterSymbol? symbol)
     {
+        if (symbol == null)
+        {
+            return null;
+        }
+        
         var factors = new List<string>();
         if (symbol.HasValueTypeConstraint)
+        {
             factors.Add("struct");
+        }
         else if (symbol.HasReferenceTypeConstraint)
+        {
             factors.Add("class");
+        }
         else if (symbol.HasNotNullConstraint)
+        {
             factors.Add("notnull");
+        }
         else if (symbol.HasUnmanagedTypeConstraint)
+        {
             factors.Add("unmanaged");
+        }
+        else
+        {
+            // No factors to add
+        }
 
         if (symbol.HasConstructorConstraint)
+        {
             factors.Add("new()");
+        }
 
         factors.AddRange(symbol.ConstraintTypes.Select(item => item.TryFullName())!);
 
         if (factors.Count == 0)
+        {
             return null;
+        }
+
         return "where " + symbol.Name + " : " + string.Join(", ", factors);
+    }
+
+    public static bool IsString(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.SpecialType == SpecialType.System_String;
+    }
+    
+    public static bool IsEnum(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.TypeKind == TypeKind.Enum;
+    }
+    
+    public static bool IsArray(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.SpecialType == SpecialType.System_Array;
+    }
+    
+    public static bool IsEnumerable(this ISymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.Name == nameof(IEnumerable);
+    }
+    
+    public static bool IsCollection(this ISymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.Name == nameof(ICollection);
+    }
+    
+    public static bool IsAnyEnumerable(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.IsArray() || type.IsEnumerable() || type.IsCollection();
+    }
+    
+    public static bool IsPrimitive(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.IsNumeric() || type.SpecialType switch
+        {
+            SpecialType.System_Boolean => true,
+            SpecialType.System_Char => true,
+            SpecialType.System_String => true,
+            SpecialType.System_Object => true,
+            _ => false
+        };
+    }
+
+    public static bool IsNumeric(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+        
+        return type.SpecialType switch
+        {
+            SpecialType.System_SByte => true,
+            SpecialType.System_Int16 => true,
+            SpecialType.System_Int32 => true,
+            SpecialType.System_Int64 => true,
+            SpecialType.System_Byte => true,
+            SpecialType.System_UInt16 => true,
+            SpecialType.System_UInt32 => true,
+            SpecialType.System_UInt64 => true,
+            SpecialType.System_Single => true,
+            SpecialType.System_Double => true,
+            _ => false
+        };
+    }
+    
+    public static bool IsNullable(this ITypeSymbol? type)
+    {
+        return type is 
+            { IsValueType: false, NullableAnnotation: NullableAnnotation.Annotated } or 
+            INamedTypeSymbol { Name: nameof(Nullable), TypeArguments.Length: > 0 };
+    }
+
+    public static ITypeSymbol? GetFirstTypeArgument(this ITypeSymbol? type)
+    {
+        if (type is INamedTypeSymbol { TypeArguments.Length: > 0 } srcType)
+        {
+            return srcType.TypeArguments.First();
+        }
+        return null;
     }
 }

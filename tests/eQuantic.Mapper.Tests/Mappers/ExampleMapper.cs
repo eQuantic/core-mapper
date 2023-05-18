@@ -2,38 +2,54 @@ using eQuantic.Mapper.Tests.Models;
 
 namespace eQuantic.Mapper.Tests.Mappers;
 
-public class ExampleMapper : MapperBase<ExampleA, ExampleB>
+public class ExampleMapper : IMapper<ExampleA, ExampleB>
 {
-    public override ExampleB Map(ExampleA source)
+    public ExampleB? Map(ExampleA? source)
     {
         return Map(source, new ExampleB());
     }
 
-    public override ExampleB Map(ExampleA source, ExampleB destination)
+    public ExampleB? Map(ExampleA? source, ExampleB? destination)
     {
-        destination = BeforeMap(source, destination);
-        if(destination == null) return null;
+        if(source == null)
+        {
+            return null;
+        }
+        
+        if(destination == null)
+        {
+            return null;
+        }
 
-        AfterMap(source, destination);
-
+        destination.Name = source.Name;
+        
         return destination;
     }
 }
 
-public class ExampleWithContextMapper : MapperBase<ExampleA, ExampleB, ExampleContext>
+public class ExampleWithContextMapper : IMapper<ExampleA, ExampleB, ExampleContext>
 {
-    public override ExampleB Map(ExampleA source)
+    public ExampleB? Map(ExampleA? source)
     {
         return Map(source, new ExampleB());
     }
 
-    public override ExampleB Map(ExampleA source, ExampleB destination)
+    public ExampleB? Map(ExampleA? source, ExampleB? destination)
     {
-        destination = BeforeMap(source, destination);
-        if(destination == null) return null;
-
-        AfterMap(source, destination);
+        if(source == null)
+        {
+            return null;
+        }
+        
+        if(destination == null)
+        {
+            return null;
+        }
+        
+        destination.Name = source.Name;
 
         return destination;
     }
+
+    public ExampleContext? Context { get; set; }
 }

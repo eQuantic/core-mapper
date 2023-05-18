@@ -35,16 +35,85 @@ public class ExampleB
 
 ### The mapper
 ```csharp
-public class ExampleMapper : MapperBase<ExampleA, ExampleB>
+public class ExampleMapper : IMapper<ExampleA, ExampleB>
 {
+    public ExampleB? Map(ExampleA? source)
+    {
+        return Map(source, new ExampleB());
+    }
+
+    public ExampleB? Map(ExampleA? source, ExampleB? destination)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        if (destination == null)
+        {
+            return Map(source);
+        }
+        
+        destination.Id = source.Id;
+        destination.Name = source.Name;
+        destination.Date = source.Date;
+        
+        return destination;
+    }
 }
 ```
+
+### The mapper with context
+
+```csharp
+public class ExampleContext
+{
+    public string Code { get; set; }
+}
+```
+
+```csharp
+public class ExampleMapper : IMapper<ExampleA, ExampleB, ExampleContext>
+{
+    public ExampleContext Context { get; set; }
+    
+    public ExampleB? Map(ExampleA? source)
+    {
+        return Map(source, new ExampleB());
+    }
+
+    public ExampleB? Map(ExampleA? source, ExampleB? destination)
+    {
+        if (source == null)
+        {
+            return null;
+        }
+
+        if (destination == null)
+        {
+            return Map(source);
+        }
+        
+        destination.Id = source.Id;
+        destination.Name = source.Name;
+        destination.Date = source.Date;
+        
+        if(!string.IsNullOrEmpty(Context.Code))
+        {
+            destination.Code = Context.Code;
+        }
+        return destination;
+    }
+}
+```
+
+### Auto-Generated Code
 
 If you want that the mapper to be auto-generated, you need to use the `MapperAttribute` and `partial` definition into the class mapper
 
 ```csharp
 [Mapper(typeof(ExampleA), typeof(ExampleB))]
-public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
+public partial class ExampleMapper : IMapper
 {
 }
 ```
@@ -78,14 +147,23 @@ If you need customize the auto-generated mapper, just override `Before` or/and `
 
 ```csharp
 [Mapper(typeof(ExampleA), typeof(ExampleB))]
-public partial class ExampleMapper : MapperBase<ExampleA, ExampleB>
+public partial class ExampleMapper : IMapper
 {
-    public override ExampleB AfterMap(ExampleA source, ExampleB destination)
+    partial void AfterMap(ExampleA source, ExampleB destination)
     {
         if(source.Name == "Test")
+        {
             destination.Name = "Empty";
-
-        return destination;
+        }
     }
 }
+```
+## Debugging
+
+Inside `MapperGenerator` on `Initialize` method use:
+
+```csharp
+#if DEBUG
+    SpinWait.SpinUntil(() => Debugger.IsAttached);
+#endif 
 ```

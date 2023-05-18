@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.CodeAnalysis;
 
 namespace eQuantic.Mapper.Generator;
 
+[ExcludeFromCodeCoverage]
 internal class MapperInfo
 {
     public INamedTypeSymbol MapperClass { get; }

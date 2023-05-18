@@ -16,7 +16,7 @@ public interface IMapper<in TSource, TDestination> : IMapper
     /// </summary>
     /// <param name="source">The source.</param>
     /// <returns></returns>
-    TDestination Map(TSource source);
+    TDestination? Map(TSource? source);
         
     /// <summary>
     /// Maps the specified source using an existent object
@@ -24,7 +24,7 @@ public interface IMapper<in TSource, TDestination> : IMapper
     /// <param name="source"></param>
     /// <param name="destination"></param>
     /// <returns></returns>
-    TDestination Map(TSource source, TDestination destination);
+    TDestination? Map(TSource? source, TDestination? destination);
 }
 
 /// <summary>

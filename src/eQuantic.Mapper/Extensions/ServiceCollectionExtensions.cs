@@ -11,12 +11,12 @@ public static class ServiceCollectionExtensions
         return services.AddMappers(_ => {});
     }
     
-    public static IServiceCollection AddMappers(this IServiceCollection services, Action<MapperOptions> options)
+    public static IServiceCollection AddMappers(this IServiceCollection services, Action<MapperOptions>? options)
     {
         var mapperOptions = new MapperOptions();
-        options.Invoke(mapperOptions);
+        options?.Invoke(mapperOptions);
         
-        var types = mapperOptions.Assemblies
+        var types = mapperOptions.GetAssemblies()
             .SelectMany(o => o.GetTypes())
             .Where(o => o is { IsAbstract: false, IsInterface: false } && o.GetInterfaces().Any(i => i == typeof(IMapper)));
         foreach (var type in types)
@@ -34,7 +34,9 @@ public static class ServiceCollectionExtensions
         var mapperInterface = interfaces.FirstOrDefault(o => o.GenericTypeArguments.Length > 0 && o.GetGenericTypeDefinition() == typeof(IMapper<,>));
             
         if(mapperInterface == null)
+        {
             return;
+        }
 
         var sourceType = mapperInterface.GenericTypeArguments[0];
         var destinationType = mapperInterface.GenericTypeArguments[1];

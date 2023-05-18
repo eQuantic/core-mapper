@@ -1,7 +1,9 @@
+using System.Diagnostics.CodeAnalysis;
 using System.Reflection;
 
 namespace eQuantic.Mapper.Options;
 
+[ExcludeFromCodeCoverage]
 public class MapperOptions
 {
     private readonly List<Assembly> _assemblies = new();
@@ -28,5 +30,5 @@ public class MapperOptions
         return this;
     }
     
-    internal List<Assembly> Assemblies => _assemblies.Any() ? _assemblies : AllAssemblies.ToList();
+    internal List<Assembly> GetAssemblies() => _assemblies.Any() ? _assemblies : AllAssemblies.ToList();
 }
