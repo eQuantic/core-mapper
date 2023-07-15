@@ -4,7 +4,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper", "src\eQua
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "root", "root", "{28F51E6F-D0A4-44A7-96E9-92EB7FAE0CAE}"
 	ProjectSection(SolutionItems) = preProject
-					.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
 		README.md = README.md
 		NuGet.Config = NuGet.Config
 		LICENSE = LICENSE
@@ -21,6 +20,13 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper.Tests", "tests\eQuantic.Mapper.Tests\eQuantic.Mapper.Tests.csproj", "{2E9F34DB-52F3-4D73-B22F-685685955E74}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "eQuantic.Mapper.Generator.Tests", "tests\eQuantic.Mapper.Generator.Tests\eQuantic.Mapper.Generator.Tests.csproj", "{E7398ED9-CC2B-4287-A017-65C888638C0F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "github", "github", "{79C20F73-F568-49F4-A9C0-AD8E305D095C}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "workflows", "workflows", "{7B9DA168-F460-4158-B0F0-CD0F5D49B624}"
+	ProjectSection(SolutionItems) = preProject
+		.github\workflows\dotnetcore.yml = .github\workflows\dotnetcore.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -55,5 +61,7 @@ Global
 		{9FF598F5-D6B7-47A2-8321-DCAEA5FF6D70} = {384011EF-95DB-458B-8DF2-FB3BFCFB2529}
 		{2E9F34DB-52F3-4D73-B22F-685685955E74} = {BB07FD55-DEDA-454A-BF18-F3321714EDB4}
 		{E7398ED9-CC2B-4287-A017-65C888638C0F} = {BB07FD55-DEDA-454A-BF18-F3321714EDB4}
+		{79C20F73-F568-49F4-A9C0-AD8E305D095C} = {28F51E6F-D0A4-44A7-96E9-92EB7FAE0CAE}
+		{7B9DA168-F460-4158-B0F0-CD0F5D49B624} = {79C20F73-F568-49F4-A9C0-AD8E305D095C}
 	EndGlobalSection
 EndGlobal

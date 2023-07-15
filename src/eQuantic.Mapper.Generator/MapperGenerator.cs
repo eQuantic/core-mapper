@@ -58,12 +58,14 @@ public sealed class MapperGenerator : ISourceGenerator
                     }
 
                     code.AppendLine();
-
+                    code.AppendLine("#nullable enable");
                     using (code.BeginScope("public {0}? Map({1}? source)", destClassName, srcClassName))
                     {
                         code.AppendLine($"return Map(source, new {destClassName}());");
                     }
-
+                    code.AppendLine("#nullable disable");
+                    
+                    code.AppendLine("#nullable enable");
                     using (code.BeginScope("public {0}? Map({1}? source, {0}? destination)", destClassName,
                                srcClassName))
                     {
@@ -91,9 +93,15 @@ public sealed class MapperGenerator : ISourceGenerator
                         code.AppendLine("AfterMap(source, destination);");
                         code.AppendLine("return destination;");
                     }
-
+                    code.AppendLine("#nullable disable");
+                    
+                    code.AppendLine("#nullable enable");
                     code.AppendLine("partial void BeforeMap({0}? source, {1}? destination);", srcClassName, destClassName);
+                    code.AppendLine("#nullable disable");
+                    
+                    code.AppendLine("#nullable enable");
                     code.AppendLine("partial void AfterMap({0}? source, {1}? destination);", srcClassName, destClassName);
+                    code.AppendLine("#nullable disable");
                 }
             }
 
