@@ -5,9 +5,9 @@
         <Authors>eQuantic Systems</Authors>
         <Copyright>2023</Copyright>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
-        <Version>1.1.4.0</Version>
-        <FileVersion>1.1.4.0</FileVersion>
-        <AssemblyVersion>1.1.4.0</AssemblyVersion>
+        <Version>1.1.5.0</Version>
+        <FileVersion>1.1.5.0</FileVersion>
+        <AssemblyVersion>1.1.5.0</AssemblyVersion>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
         <TargetFrameworks>netstandard2.0;net7.0;net8.0</TargetFrameworks>
