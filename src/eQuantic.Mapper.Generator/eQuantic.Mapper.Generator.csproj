@@ -10,7 +10,7 @@
         <AssemblyVersion>1.1.4.0</AssemblyVersion>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
-        <TargetFrameworks>netstandard2.0;net7.0</TargetFrameworks>
+        <TargetFrameworks>netstandard2.0;net7.0;net8.0</TargetFrameworks>
         
         <IsPackable>true</IsPackable>
         
@@ -57,11 +57,11 @@
         <None Include="Icon_dialog.png" Pack="true" PackagePath="Icon_dialog.png" />
         <None Include="Icon_list.png" Pack="true" PackagePath="Icon_list.png" />
         <None Include="../../LICENSE" Pack="true" PackagePath="" />
-        <None Include="../../README.md" Pack="true" PackagePath=""/>
+        <None Include="../../README.md" Pack="true" PackagePath="" />
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.6.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
