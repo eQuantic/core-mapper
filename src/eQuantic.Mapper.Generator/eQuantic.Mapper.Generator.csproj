@@ -5,12 +5,12 @@
         <Authors>eQuantic Systems</Authors>
         <Copyright>2023</Copyright>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
-        <Version>1.1.5.0</Version>
-        <FileVersion>1.1.5.0</FileVersion>
-        <AssemblyVersion>1.1.5.0</AssemblyVersion>
+        <Version>1.1.6.0</Version>
+        <FileVersion>1.1.6.0</FileVersion>
+        <AssemblyVersion>1.1.6.0</AssemblyVersion>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
-        <TargetFrameworks>netstandard2.0;net7.0;net8.0</TargetFrameworks>
+        <TargetFramework>netstandard2.0</TargetFramework>
         
         <IsPackable>true</IsPackable>
         
@@ -76,7 +76,7 @@
 
     <ItemGroup>
         <ProjectReference Include="$(ProjectDir)\..\eQuantic.Mapper\eQuantic.Mapper.csproj" GeneratePathProperty="true" PrivateAssets="all" />
-        <None Include="$(OutputPath)\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(ProjectDir)\..\eQuantic.Mapper\bin\$(Configuration)\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
     <Target Name="GetDependencyTargetPaths">
@@ -84,7 +84,7 @@
             <!-- our local project will not generate path variable so we need to find it from it's own build output-->
             <!-- I used $(OutputPath) variable because the dependecy has the exact TFM and configuration as the generator 
                  you might need to add configuration manually -->
-            <TargetPathWithTargetPlatformMoniker Include="$(ProjectDir)\..\eQuantic.Mapper\$(OutputPath)\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(ProjectDir)\..\eQuantic.Mapper\bin\$(Configuration)\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
         </ItemGroup>
     </Target>
 </Project>

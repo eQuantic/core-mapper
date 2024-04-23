@@ -8,6 +8,10 @@
     }
   },
   "profiles": {
+    "generator": {
+      "commandName": "DebugRoslynComponent",
+      "targetProject": "../eQuantic.Mapper.Sample/eQuantic.Mapper.Sample.csproj"
+    },
     "http": {
       "commandName": "Project",
       "dotnetRunMessages": true,
