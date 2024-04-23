@@ -5,9 +5,9 @@
         <Authors>eQuantic Systems</Authors>
         <Copyright>2023</Copyright>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
-        <Version>1.1.7.0</Version>
-        <FileVersion>1.1.7.0</FileVersion>
-        <AssemblyVersion>1.1.7.0</AssemblyVersion>
+        <Version>1.1.8.0</Version>
+        <FileVersion>1.1.8.0</FileVersion>
+        <AssemblyVersion>1.1.8.0</AssemblyVersion>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -39,6 +39,7 @@
         <Nullable>enable</Nullable>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
+        <IncludeBuildOutput>false</IncludeBuildOutput>
     </PropertyGroup>
     
     <PropertyGroup>
@@ -55,7 +56,7 @@
     </ItemGroup>
     
     <ItemGroup>
-        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.7.0" PrivateAssets="all" />
+        <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.9.2" PrivateAssets="all" />
         <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.3.4">
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
@@ -71,6 +72,7 @@
     <ItemGroup>
         <ProjectReference Include="$(ProjectDir)\..\eQuantic.Mapper\eQuantic.Mapper.csproj" GeneratePathProperty="true" PrivateAssets="all" />
         <None Include="$(ProjectDir)\..\eQuantic.Mapper\bin\$(Configuration)\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
 
     <Target Name="GetDependencyTargetPaths">
