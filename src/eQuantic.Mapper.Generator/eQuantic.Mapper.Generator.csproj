@@ -5,9 +5,9 @@
         <Authors>eQuantic Systems</Authors>
         <Copyright>2023</Copyright>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
-        <Version>1.1.8.0</Version>
-        <FileVersion>1.1.8.0</FileVersion>
-        <AssemblyVersion>1.1.8.0</AssemblyVersion>
+        <Version>1.1.9.0</Version>
+        <FileVersion>1.1.9.0</FileVersion>
+        <AssemblyVersion>1.1.9.0</AssemblyVersion>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
         <TargetFramework>netstandard2.0</TargetFramework>
@@ -70,17 +70,19 @@
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="$(ProjectDir)\..\eQuantic.Mapper\eQuantic.Mapper.csproj" GeneratePathProperty="true" PrivateAssets="all" />
-        <None Include="$(ProjectDir)\..\eQuantic.Mapper\bin\$(Configuration)\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
-        <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+        <ProjectReference Include="..\eQuantic.Mapper\eQuantic.Mapper.csproj" PrivateAssets="all" GeneratePathProperty="true" />
     </ItemGroup>
-
+    
+    <ItemGroup>
+        <None Include="$(OutputPath)\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+    </ItemGroup>
+    
     <Target Name="GetDependencyTargetPaths">
         <ItemGroup>
             <!-- our local project will not generate path variable so we need to find it from it's own build output-->
             <!-- I used $(OutputPath) variable because the dependecy has the exact TFM and configuration as the generator 
                  you might need to add configuration manually -->
-            <TargetPathWithTargetPlatformMoniker Include="$(ProjectDir)\..\eQuantic.Mapper\bin\$(Configuration)\netstandard2.0\*.dll" IncludeRuntimeDependency="false" />
+            <TargetPathWithTargetPlatformMoniker Include="$(OutputPath)\*.dll" IncludeRuntimeDependency="false" />
         </ItemGroup>
     </Target>
 </Project>
