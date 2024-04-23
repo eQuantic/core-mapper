@@ -39,12 +39,6 @@
         <Nullable>enable</Nullable>
         <IsRoslynComponent>true</IsRoslynComponent>
         <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
-        <DevelopmentDependency>true</DevelopmentDependency>
-        <DebugType>pdbonly</DebugType>
-        <DebugSymbols>true</DebugSymbols>
-        <IncludeBuildOutput>false</IncludeBuildOutput>
-        <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-        <EnableNETAnalyzers>True</EnableNETAnalyzers>
     </PropertyGroup>
     
     <PropertyGroup>
