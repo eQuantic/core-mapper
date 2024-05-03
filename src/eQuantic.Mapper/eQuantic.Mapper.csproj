@@ -4,7 +4,7 @@
         <Description>eQuantic Mapper Library</Description>
         <Copyright>2023</Copyright>
         <AssemblyTitle>eQuantic.Mapper</AssemblyTitle>
-        <Version>1.2.0.0</Version>
+        <Version>1.2.1.0</Version>
         <Authors>eQuantic Systems</Authors>
         <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
         <AssemblyName>eQuantic.Mapper</AssemblyName>
@@ -24,8 +24,8 @@
         <PackageReadmeFile>README.md</PackageReadmeFile>
         <RepositoryUrl>https://github.com/eQuantic/core-mapper</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
-        <AssemblyVersion>1.2.0.0</AssemblyVersion>
-        <FileVersion>1.2.0.0</FileVersion>
+        <AssemblyVersion>1.2.1.0</AssemblyVersion>
+        <FileVersion>1.2.1.0</FileVersion>
         <PackageIcon>Icon.png</PackageIcon>
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>

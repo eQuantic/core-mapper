@@ -34,4 +34,32 @@ public class ServiceCollectionExtensionsTests
 
         mapper.Should().NotBeNull();
     }
+    
+    [Test]
+    public void ServiceCollectionExtensions_AddMappers_register_async_mapper_successfully()
+    {
+        var services = new ServiceCollection();
+        services.AddMappers();
+        
+        var provider = services.BuildServiceProvider();
+
+        var mapperFactory = provider.GetRequiredService<IMapperFactory>();
+        var mapper = mapperFactory.GetAsyncMapper<ExampleA, ExampleB>();
+
+        mapper.Should().NotBeNull();
+    }
+    
+    [Test]
+    public void ServiceCollectionExtensions_AddMappers_register_async_mapper_with_context_successfully()
+    {
+        var services = new ServiceCollection();
+        services.AddMappers();
+        
+        var provider = services.BuildServiceProvider();
+
+        var mapperFactory = provider.GetRequiredService<IMapperFactory>();
+        var mapper = mapperFactory.GetAsyncMapper<ExampleA, ExampleB, ExampleContext>(new ExampleContext());
+
+        mapper.Should().NotBeNull();
+    }
 }
