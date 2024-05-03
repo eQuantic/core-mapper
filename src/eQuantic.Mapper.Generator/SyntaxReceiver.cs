@@ -1,6 +1,5 @@
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
-using eQuantic.Mapper.Attributes;
 using eQuantic.Mapper.Generator.Extensions;
 
 namespace eQuantic.Mapper.Generator;
@@ -22,12 +21,13 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
             var anyClass = (INamedTypeSymbol?)context.SemanticModel.GetDeclaredSymbol(context.Node);
 
             if (anyClass?.BaseType == null || 
-                anyClass.AllInterfaces.Any(o => o.Name == nameof(IMapper)) != true)
+                anyClass.AllInterfaces.Any(o => o.FullName() == "eQuantic.Mapper.IMapper") != true)
             {
                 return;
             }
 
-            var generatedAttr = anyClass.GetAttribute<MapperAttribute>();
+            var generatedAttr = anyClass.GetAttributes()
+                .FirstOrDefault(o => o.AttributeClass?.FullName() == "eQuantic.Mapper.Attributes.MapperAttribute");
             if (generatedAttr == null)
             {
                 return;

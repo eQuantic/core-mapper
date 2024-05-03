@@ -19,14 +19,16 @@
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
-        <PackageReference Include="coverlet.collector" Version="6.0.2">
+        <PackageReference Include="coverlet.collector" Version="6.0.0">
           <PrivateAssets>all</PrivateAssets>
           <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\..\src\eQuantic.Mapper.Generator\eQuantic.Mapper.Generator.csproj" />
+      <ProjectReference Include="..\..\src\eQuantic.Mapper.Generator\eQuantic.Mapper.Generator.csproj"
+                        ReferenceOutputAssembly="true"
+                        OutputItemType="Analyzer"/>
       <ProjectReference Include="..\..\src\eQuantic.Mapper\eQuantic.Mapper.csproj" />
     </ItemGroup>
 

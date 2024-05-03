@@ -21,11 +21,11 @@ public class MapperFactory : IMapperFactory
     }
 
     /// <summary>
-    /// Gets the adapter.
+    /// Gets the mapper.
     /// </summary>
     /// <typeparam name="TSource">The type of the source.</typeparam>
     /// <typeparam name="TDestination">The type of the destination.</typeparam>
-    /// <returns></returns>
+    /// <returns>The mapper</returns>
     public IMapper<TSource, TDestination>? GetMapper<TSource, TDestination>()
     {
         var service = _serviceProvider.GetService(typeof(IMapper<TSource, TDestination>));
@@ -33,13 +33,13 @@ public class MapperFactory : IMapperFactory
     }
 
     /// <summary>
-    /// Gets the adapter using the specified context
+    /// Gets the mapper using the specified context
     /// </summary>
     /// <typeparam name="TSource">The source</typeparam>
     /// <typeparam name="TDestination">The destination</typeparam>
     /// <typeparam name="TContext">The context</typeparam>
     /// <param name="context">The context</param>
-    /// <returns>The adapter</returns>
+    /// <returns>The mapper</returns>
     public IMapper<TSource, TDestination, TContext>? GetMapper<TSource, TDestination, TContext>(TContext context)
     {
         var service = _serviceProvider.GetService(typeof(IMapper<TSource, TDestination, TContext>));
@@ -50,6 +50,40 @@ public class MapperFactory : IMapperFactory
         }
 
         var mapper = (IMapper<TSource, TDestination, TContext>)service;
+        mapper.Context = context;
+        return mapper;
+    }
+
+    /// <summary>
+    /// Gets the asynchronous mapper.
+    /// </summary>
+    /// <typeparam name="TSource">The type of the source.</typeparam>
+    /// <typeparam name="TDestination">The type of the destination.</typeparam>
+    /// <returns>The asynchronous mapper</returns>
+    public IAsyncMapper<TSource, TDestination>? GetAsyncMapper<TSource, TDestination>()
+    {
+        var service = _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination>));
+        return (IAsyncMapper<TSource, TDestination>?)service;
+    }
+
+    /// <summary>
+    /// Gets the asynchronous mapper using the specified context
+    /// </summary>
+    /// <typeparam name="TSource">The source</typeparam>
+    /// <typeparam name="TDestination">The destination</typeparam>
+    /// <typeparam name="TContext">The context</typeparam>
+    /// <param name="context">The context</param>
+    /// <returns>The asynchronous mapper</returns>
+    public IAsyncMapper<TSource, TDestination, TContext>? GetAsyncMapper<TSource, TDestination, TContext>(TContext context)
+    {
+        var service = _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination, TContext>));
+
+        if (service == null)
+        {
+            return null;
+        }
+
+        var mapper = (IAsyncMapper<TSource, TDestination, TContext>)service;
         mapper.Context = context;
         return mapper;
     }
