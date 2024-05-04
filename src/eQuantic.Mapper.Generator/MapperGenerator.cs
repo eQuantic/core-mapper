@@ -29,14 +29,23 @@ public sealed class MapperGenerator : ISourceGenerator
         }
     }
 
+    private static List<IPropertySymbol> GetProperties(ITypeSymbol? sourceClass)
+    {
+        if (sourceClass == null) return [];
+        
+        var list = GetProperties(sourceClass.BaseType);
+        list.AddRange(sourceClass.ReadWriteScalarProperties());
+        return list;
+    }
+    
     private static void WriteMapper(MapperInfo mapperInfo, GeneratorExecutionContext context, bool asynchronous)
     {
         var asyncPrefix = asynchronous ? "Async" : "";
         var className = $"{asyncPrefix}{mapperInfo.MapperClass.Name}";
         var srcClassName = mapperInfo.SourceClass.Name;
-        var srcProperties = mapperInfo.SourceClass.ReadWriteScalarProperties().ToList();
+        var srcProperties = GetProperties(mapperInfo.SourceClass);
         var destClassName = mapperInfo.DestinationClass.Name;
-        var destProperties = mapperInfo.DestinationClass.ReadWriteScalarProperties().ToList();
+        var destProperties = GetProperties(mapperInfo.DestinationClass);
         var interfaceName = $"I{asyncPrefix}Mapper<{srcClassName}, {destClassName}>";
         var fileName = $"{className}.g.cs";
         var code = new CodeWriter();

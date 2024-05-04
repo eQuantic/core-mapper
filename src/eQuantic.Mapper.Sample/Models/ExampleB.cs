@@ -2,9 +2,12 @@ using eQuantic.Mapper.Attributes;
 
 namespace eQuantic.Mapper.Sample.Models;
 
-public class ExampleB
+public class ExampleBase
 {
     public int Id { get; set; }
+}
+public class ExampleB : ExampleBase
+{
     public string Name { get; set; } = string.Empty;
     public DateTime Date { get; set; }
     
