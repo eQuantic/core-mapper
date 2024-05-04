@@ -1,18 +1,29 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Description>eQuantic Mapper Library</Description>
-        <Copyright>2023</Copyright>
+        <Version>1.2.2.0</Version>
+        <FileVersion>1.2.2.0</FileVersion>
+        <AssemblyVersion>1.2.2.0</AssemblyVersion>
         <AssemblyTitle>eQuantic.Mapper</AssemblyTitle>
-        <Version>1.2.1.0</Version>
-        <Authors>eQuantic Systems</Authors>
-        <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
         <AssemblyName>eQuantic.Mapper</AssemblyName>
+        
+        <Description>eQuantic Mapper Library</Description>
+        <Authors>eQuantic Systems</Authors>
+        <Copyright>2023</Copyright>
+        <TargetFrameworks>netstandard2.0;net6.0;net7.0;net8.0</TargetFrameworks>
+
+        <RepositoryUrl>https://github.com/eQuantic/core-mapper</RepositoryUrl>
+        <RepositoryType>Git</RepositoryType>
+
+        <PackageIcon>Icon.png</PackageIcon>
         <PackageId>eQuantic.Mapper</PackageId>
         <PackageTags>eQuantic;Mapper;Library</PackageTags>
         <PackageReleaseNotes>DTOs mapping without reflection</PackageReleaseNotes>
         <PackageProjectUrl>https://github.com/eQuantic/core-mapper</PackageProjectUrl>
         <PackageOutputPath>../artifacts/</PackageOutputPath>
+        <PackageLicenseFile>LICENSE</PackageLicenseFile>
+        <PackageReadmeFile>README.md</PackageReadmeFile>
+        
         <GenerateAssemblyTitleAttribute>false</GenerateAssemblyTitleAttribute>
         <GenerateAssemblyDescriptionAttribute>false</GenerateAssemblyDescriptionAttribute>
         <GenerateAssemblyConfigurationAttribute>false</GenerateAssemblyConfigurationAttribute>
@@ -20,13 +31,7 @@
         <GenerateAssemblyProductAttribute>false</GenerateAssemblyProductAttribute>
         <GenerateAssemblyCopyrightAttribute>false</GenerateAssemblyCopyrightAttribute>
         <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-        <PackageLicenseFile>LICENSE</PackageLicenseFile>
-        <PackageReadmeFile>README.md</PackageReadmeFile>
-        <RepositoryUrl>https://github.com/eQuantic/core-mapper</RepositoryUrl>
-        <RepositoryType>Git</RepositoryType>
-        <AssemblyVersion>1.2.1.0</AssemblyVersion>
-        <FileVersion>1.2.1.0</FileVersion>
-        <PackageIcon>Icon.png</PackageIcon>
+        
         <LangVersion>latest</LangVersion>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
