@@ -257,17 +257,12 @@ public static class SymbolExtensions
             return false;
         }
         
-        return type.TypeKind == TypeKind.Enum;
+        return type.TypeKind == TypeKind.Enum || (type.IsNullable() && type.GetFirstTypeArgument()?.TypeKind == TypeKind.Enum);
     }
     
     public static bool IsArray(this ITypeSymbol? type)
     {
-        if (type == null)
-        {
-            return false;
-        }
-        
-        return type.SpecialType == SpecialType.System_Array;
+        return type is IArrayTypeSymbol || type?.SpecialType == SpecialType.System_Array;
     }
     
     public static bool IsEnumerable(this ISymbol? type)
@@ -349,10 +344,11 @@ public static class SymbolExtensions
 
     public static ITypeSymbol? GetFirstTypeArgument(this ITypeSymbol? type)
     {
-        if (type is INamedTypeSymbol { TypeArguments.Length: > 0 } srcType)
+        return type switch
         {
-            return srcType.TypeArguments.First();
-        }
-        return null;
+            IArrayTypeSymbol arrayType => arrayType.ElementType,
+            INamedTypeSymbol { TypeArguments.Length: > 0 } srcType => srcType.TypeArguments.First(),
+            _ => null
+        };
     }
 }

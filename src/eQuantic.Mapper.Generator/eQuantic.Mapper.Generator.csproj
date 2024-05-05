@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>1.2.3.0</Version>
-        <FileVersion>1.2.3.0</FileVersion>
-        <AssemblyVersion>1.2.3.0</AssemblyVersion>
+        <Version>1.2.4.0</Version>
+        <FileVersion>1.2.4.0</FileVersion>
+        <AssemblyVersion>1.2.4.0</AssemblyVersion>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
@@ -12,6 +12,8 @@
         <Copyright>2023</Copyright>
         <TargetFramework>netstandard2.0</TargetFramework>
         <IsPackable>true</IsPackable>
+        
+        <NoWarn>RS1035</NoWarn>
 
         <RepositoryUrl>https://github.com/eQuantic/core-mapper</RepositoryUrl>
         <RepositoryType>Git</RepositoryType>
@@ -57,6 +59,30 @@
         <None Include="Icon_list.png" Pack="true" PackagePath="Icon_list.png" />
         <None Include="../../LICENSE" Pack="true" PackagePath="" />
         <None Include="../../README.md" Pack="true" PackagePath="" />
+        <None Update="Templates\MapperTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>MapperTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Templates\PropertyStringToPrimitiveTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>PropertyStringToPrimitiveTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Templates\PropertyObjectTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>PropertyObjectTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Templates\PropertyEnumTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>PropertyEnumTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Templates\PropertyEnumerableTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>PropertyEnumerableTemplate.cs</LastGenOutput>
+        </None>
+        <None Update="Templates\PropertyDefaultTemplate.tt">
+          <Generator>TextTemplatingFilePreprocessor</Generator>
+          <LastGenOutput>PropertyDefaultTemplate.cs</LastGenOutput>
+        </None>
     </ItemGroup>
     
     <ItemGroup>
@@ -65,12 +91,46 @@
             <PrivateAssets>all</PrivateAssets>
             <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
         </PackageReference>
+        <PackageReference Include="System.CodeDom" Version="7.0.0" PrivateAssets="all" />
     </ItemGroup>
 
     <ItemGroup>
         <AssemblyAttribute Include="System.Runtime.CompilerServices.InternalsVisibleTo">
             <_Parameter1>$(ProjectName).Tests</_Parameter1>
         </AssemblyAttribute>
+    </ItemGroup>
+
+    <ItemGroup>
+      <Compile Update="Templates\MapperTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>MapperTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyDefaultTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>PropertyDefaultTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyStringToPrimitiveTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>PropertyStringToPrimitiveTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyObjectTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>PropertyObjectTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyEnumTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>PropertyEnumTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyEnumerableTemplate.cs">
+        <AutoGen>True</AutoGen>
+        <DesignTime>True</DesignTime>
+        <DependentUpon>PropertyEnumerableTemplate.tt</DependentUpon>
+      </Compile>
     </ItemGroup>
     
     <Target Name="GetDependencyTargetPaths">

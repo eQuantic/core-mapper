@@ -47,9 +47,20 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
                 return;
             }
 
-            var mapperContext = generatedAttr.ConstructorArguments.Length == 3 ? (INamedTypeSymbol?)generatedAttr.ConstructorArguments[2].Value : null;
+            var thirdArg = generatedAttr.ConstructorArguments.Length == 3 ? 
+                generatedAttr.ConstructorArguments[2].Value : 
+                null;
             
-            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext));
+            var fourthArg = generatedAttr.ConstructorArguments.Length == 4 ? 
+                generatedAttr.ConstructorArguments[3].Value : 
+                null;
+
+            var mapperContext = fourthArg != null ? 
+                (INamedTypeSymbol?)thirdArg : 
+                (thirdArg is null or bool ? null : (INamedTypeSymbol?)thirdArg);
+
+            var verifyNullability = fourthArg is true || thirdArg is true;
+            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext, verifyNullability));
         }
         catch (Exception ex)
         {

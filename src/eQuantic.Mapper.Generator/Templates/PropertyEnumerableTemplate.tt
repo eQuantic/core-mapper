@@ -1,0 +1,62 @@
+<#@ template language="C#" visibility="internal" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="eQuantic.Mapper.Generator.Extensions" #>
+<#
+    var srcType = srcProperty.Type.GetFirstTypeArgument();
+    var destType = destProperty.Type.GetFirstTypeArgument();
+
+    if (srcType != null && destType != null)
+    {
+        if (srcType.TryFullName() == destType.TryFullName())
+        {
+            if (srcProperty.Type.IsNullable())
+            {
+                if (verifyNullability)
+                {
+#>
+            if (source.<#=srcProperty.Name#> != null)
+                destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#><#=GetCastMethod(srcProperty, destProperty)#>;
+<#
+                }
+                else
+                {
+#>
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#><#=GetCastMethod(srcProperty, destProperty)#> ?? [];
+<#
+                }
+            }
+            else
+            {
+#>
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#><#=GetCastMethod(srcProperty, destProperty)#>;
+<#
+            }
+        }
+        else
+        {
+            if (srcProperty.Type.IsArray())
+            {
+#>
+            if (source.<#=srcProperty.Name#>?.Length > 0)
+<#
+            }
+            else
+            {
+#>
+            if (source.<#=srcProperty.Name#>?.Any() == true)
+<#
+            }
+#>
+            {
+                var mapper = _mapperFactory.GetMapper<<#=srcType!.Name#>, <#=destType!.Name#>>();
+                if (mapper != null)
+                {
+                    destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>.Select(o => mapper.Map(o))<#=GetCastMethod(srcProperty, destProperty)#>;
+                }
+            }
+<#
+        }
+    }
+    
+#>

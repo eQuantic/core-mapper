@@ -7,8 +7,9 @@ namespace eQuantic.Mapper.Generator;
 internal class CodeWriter
 {
     private StringBuilder Content { get; } = new();
-    public CodeWriter()
+    public CodeWriter(int indentLevel = 0)
     {
+        IndentLevel = indentLevel;
         InternalScopeTracker = new ScopeTracker(this); //We only need one. It can be reused.
     }
 

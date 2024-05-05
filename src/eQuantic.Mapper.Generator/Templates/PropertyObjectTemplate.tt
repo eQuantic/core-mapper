@@ -1,0 +1,11 @@
+<#@ template language="C#" visibility="internal" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+            if (source.<#= srcProperty.Name #> != null)
+            {
+                var mapper = _mapperFactory.GetMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
+                if (mapper != null)
+                {
+                    destination.<#= destProperty.Name #> = mapper.Map(source.<#=srcProperty.Name #>);
+                }
+            }
