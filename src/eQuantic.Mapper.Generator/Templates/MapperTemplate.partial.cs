@@ -113,9 +113,17 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
 
             if (symbol.Type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Any())
             {
-                foreach (var n in namedTypeSymbol.TypeArguments.Select(GetPropertiesNamespaces).SelectMany(o => o))
+                foreach (var ts in namedTypeSymbol.TypeArguments)
                 {
-                    namespaces.Add(n);
+                    var nmSpace = ts.FullNamespace();
+                    if(!string.IsNullOrEmpty(nmSpace))
+                        namespaces.Add(nmSpace!);
+
+                    var propertyNamespaces = GetPropertiesNamespaces(ts);
+                    foreach (var propertyNamespace in propertyNamespaces)
+                    {
+                        namespaces.Add(propertyNamespace);
+                    }
                 }
             }
 

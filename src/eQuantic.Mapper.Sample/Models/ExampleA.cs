@@ -1,3 +1,5 @@
+using eQuantic.Mapper.Sample.Models.Children;
+
 namespace eQuantic.Mapper.Sample.Models;
 
 public class ExampleA
@@ -21,9 +23,4 @@ public class ExampleA
     public List<SubExampleA> ExampleList { get; set; } = [];
     
     
-}
-
-public class SubExampleA
-{
-    public string Name { get; set; } = string.Empty;
 }
