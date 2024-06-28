@@ -104,10 +104,28 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
     
     private static IEnumerable<string> GetPropertiesNamespaces(ITypeSymbol classType)
     {
-        return classType.ReadWriteScalarProperties()
-            .Where(p => !p.Type.IsPrimitive())
-            .Select(p => p.Type.FullNamespace()!)
-            .Distinct()
-            .AsEnumerable();
+        var namespaces = new HashSet<string>();
+        var list = classType.ReadWriteScalarProperties();
+        foreach (var symbol in list)
+        {
+            if(symbol.Type.IsPrimitive())
+                continue;
+
+            if (symbol.Type is INamedTypeSymbol namedTypeSymbol && namedTypeSymbol.TypeArguments.Any())
+            {
+                foreach (var n in namedTypeSymbol.TypeArguments.Select(GetPropertiesNamespaces).SelectMany(o => o))
+                {
+                    namespaces.Add(n);
+                }
+            }
+
+            var fullNamespace = symbol.Type.FullNamespace();
+            if(string.IsNullOrEmpty(fullNamespace))
+                continue;
+            
+            namespaces.Add(fullNamespace!);
+        }
+
+        return namespaces;
     }
 }
