@@ -1,4 +1,5 @@
 using eQuantic.Mapper.Attributes;
+using eQuantic.Mapper.Sample.Models.Children;
 
 namespace eQuantic.Mapper.Sample.Models;
 
@@ -28,6 +29,10 @@ public class ExampleB : ExampleBase
     
     public List<string> List { get; set; } = [];
     public List<SubExampleB> ExampleList { get; set; } = [];
+    
+    public SubExampleB SubExample { get; set; } = new();
+    
+    public SubExampleA SubExampleA { get; set; } = new();
 }
 
 public class SubExampleB

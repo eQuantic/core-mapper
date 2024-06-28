@@ -21,6 +21,8 @@ public class ExampleA
     
     public List<string> List { get; set; } = [];
     public List<SubExampleA> ExampleList { get; set; } = [];
+
+    public SubExampleA SubExample { get; set; } = new();
     
-    
+    public SubExampleA SubExampleA { get; set; } = new();
 }

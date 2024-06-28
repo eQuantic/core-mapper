@@ -17,7 +17,7 @@ namespace eQuantic.Mapper.Generator.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+    #line 1 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class PropertyObjectTemplate : PropertyObjectTemplateBase
     {
@@ -29,40 +29,40 @@ namespace eQuantic.Mapper.Generator.Templates
         {
             this.Write("            if (source.");
             
-            #line 4 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+            #line 4 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" != null)\n            {\n                var mapper = _mapperFactory.GetMapper<");
             
-            #line 6 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+            #line 6 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Type.Name));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 6 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+            #line 6 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Type.Name));
             
             #line default
             #line hidden
             this.Write(">();\n                if (mapper != null)\n                {\n                    destination.");
             
-            #line 9 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+            #line 9 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = mapper.Map(source.");
             
-            #line 9 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
+            #line 9 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write(");\n                }\n            }");
+            this.Write(");\n                }\n            }\n");
             return this.GenerationEnvironment.ToString();
         }
     }

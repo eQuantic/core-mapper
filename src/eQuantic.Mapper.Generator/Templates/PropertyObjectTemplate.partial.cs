@@ -16,6 +16,7 @@ internal partial class PropertyObjectTemplate(
                srcProperty.Type is { IsValueType: false, IsReferenceType: true } &&
                !destProperty.Type.IsPrimitive() && 
                !destProperty.Type.IsArray() &&
-               destProperty.Type is { IsValueType: false, IsReferenceType: true };
+               destProperty.Type is { IsValueType: false, IsReferenceType: true } &&
+               srcProperty.Type.ToString() != destProperty.Type.ToString();
     }
 }
