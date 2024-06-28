@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>1.2.4.0</Version>
-        <FileVersion>1.2.4.0</FileVersion>
-        <AssemblyVersion>1.2.4.0</AssemblyVersion>
+        <Version>1.2.5.0</Version>
+        <FileVersion>1.2.5.0</FileVersion>
+        <AssemblyVersion>1.2.5.0</AssemblyVersion>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
@@ -130,6 +130,24 @@
         <AutoGen>True</AutoGen>
         <DesignTime>True</DesignTime>
         <DependentUpon>PropertyEnumerableTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\MapperTemplate.partial.cs">
+        <DependentUpon>MapperTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyDefaultTemplate.partial.cs">
+        <DependentUpon>PropertyDefaultTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyEnumerableTemplate.partial.cs">
+        <DependentUpon>PropertyEnumerableTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyEnumTemplate.partial.cs">
+        <DependentUpon>PropertyEnumTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyObjectTemplate.partial.cs">
+        <DependentUpon>PropertyObjectTemplate.tt</DependentUpon>
+      </Compile>
+      <Compile Update="Templates\PropertyStringToPrimitiveTemplate.partial.cs">
+        <DependentUpon>PropertyStringToPrimitiveTemplate.tt</DependentUpon>
       </Compile>
     </ItemGroup>
     

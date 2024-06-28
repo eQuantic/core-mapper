@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Diagnostics.CodeAnalysis;
+using System.Text;
 using Microsoft.CodeAnalysis;
 
 namespace eQuantic.Mapper.Generator.Extensions;
@@ -265,24 +266,29 @@ public static class SymbolExtensions
         return type is IArrayTypeSymbol || type?.SpecialType == SpecialType.System_Array;
     }
     
-    public static bool IsEnumerable(this ISymbol? type)
+    public static bool IsEnumerable(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(IEnumerable<>));
+    public static bool IsCollection(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(ICollection<>));
+    public static bool IsList(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(List<>));
+    public static bool IsHashSet(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(HashSet<>));
+    
+    public static bool IsTypeOf(this ISymbol? type, Type typeOf)
     {
         if (type == null)
         {
             return false;
         }
-        
-        return type.Name == nameof(IEnumerable);
+
+        return type.ToString() == typeOf.FullName;
     }
     
-    public static bool IsCollection(this ISymbol? type)
+    public static bool IsOriginalDefinitionFrom(this ISymbol? type, Type definitionType)
     {
         if (type == null)
         {
             return false;
         }
-        
-        return type.Name == nameof(ICollection);
+
+        return type.OriginalDefinition.ToString() == definitionType.CSharpName(true);
     }
     
     public static bool IsAnyEnumerable(this ITypeSymbol? type)
@@ -292,7 +298,7 @@ public static class SymbolExtensions
             return false;
         }
         
-        return type.IsArray() || type.IsEnumerable() || type.IsCollection();
+        return type.IsArray() || type.IsEnumerable() || type.IsCollection() || type.IsList() || type.IsHashSet();
     }
     
     public static bool IsPrimitive(this ITypeSymbol? type)
@@ -350,5 +356,19 @@ public static class SymbolExtensions
             INamedTypeSymbol { TypeArguments.Length: > 0 } srcType => srcType.TypeArguments.First(),
             _ => null
         };
+    }
+    
+    public static string CSharpName(this Type type, bool fullName = false)
+    {
+        var sb = new StringBuilder();
+        var name = fullName ? type.FullName! : type.Name;
+        if (!type.IsGenericType) 
+            return name;
+        sb.Append(name.Substring(0, name.IndexOf('`')));
+        sb.Append("<");
+        sb.Append(string.Join(", ", type.GetGenericArguments()
+            .Select(t => t.CSharpName())));
+        sb.Append(">");
+        return sb.ToString();
     }
 }

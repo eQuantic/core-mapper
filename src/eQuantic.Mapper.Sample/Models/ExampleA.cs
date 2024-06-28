@@ -16,4 +16,14 @@ public class ExampleA
     public string[]? NullableArray { get; set; } = [];
     
     public IEnumerable<string> Enumerable { get; set; } = [];
+    
+    public List<string> List { get; set; } = [];
+    public List<SubExampleA> ExampleList { get; set; } = [];
+    
+    
+}
+
+public class SubExampleA
+{
+    public string Name { get; set; } = string.Empty;
 }

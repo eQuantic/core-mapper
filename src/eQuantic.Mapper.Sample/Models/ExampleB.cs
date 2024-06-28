@@ -25,4 +25,12 @@ public class ExampleB : ExampleBase
     public string[]? NullableArray { get; set; } = [];
     
     public IEnumerable<string> Enumerable { get; set; } = [];
+    
+    public List<string> List { get; set; } = [];
+    public List<SubExampleB> ExampleList { get; set; } = [];
+}
+
+public class SubExampleB
+{
+    public string Name { get; set; } = string.Empty;
 }
