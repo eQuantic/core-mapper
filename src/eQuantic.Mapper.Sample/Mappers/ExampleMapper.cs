@@ -8,3 +8,9 @@ public partial class ExampleMapper : IMapper
 {
     
 }
+
+[Mapper(typeof(ExampleA), typeof(ExampleB))]
+public partial class AsyncExampleMapper : IAsyncMapper
+{
+    
+}

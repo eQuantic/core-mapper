@@ -1,11 +1,15 @@
 namespace eQuantic.Mapper;
 
+public interface IAsyncMapper : IMapper
+{
+    
+}
 /// <summary>
 /// Mapper interface
 /// </summary>
 /// <typeparam name="TSource">The type of the source.</typeparam>
 /// <typeparam name="TDestination">The type of the destination.</typeparam>
-public interface IAsyncMapper<in TSource, TDestination> : IMapper
+public interface IAsyncMapper<in TSource, TDestination> : IAsyncMapper
 {
     /// <summary>
     /// Maps the specified source.

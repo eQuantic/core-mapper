@@ -4,7 +4,7 @@
 <#@ import namespace="eQuantic.Mapper.Generator.Extensions" #>
 <#
     var asyncPrefix = asynchronous ? "Async" : "";
-    var className = $"{asyncPrefix}{mapperInfo.MapperClass.Name}";
+    var className = mapperInfo.MapperClass.Name;
     var srcClassName = mapperInfo.SourceClass.Name;
     var srcProperties = GetProperties(mapperInfo.SourceClass);
     var destClassName = mapperInfo.DestinationClass.Name;

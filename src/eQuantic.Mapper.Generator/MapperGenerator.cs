@@ -23,15 +23,14 @@ public sealed class MapperGenerator : ISourceGenerator
 
         foreach (var mapperInfo in receiver.Infos)
         {
-            WriteMapper(mapperInfo, context, false);
-            WriteMapper(mapperInfo, context, true);
+            WriteMapper(mapperInfo, context);
         }
     }
     
-    private static void WriteMapper(MapperInfo mapperInfo, GeneratorExecutionContext context, bool asynchronous)
+    private static void WriteMapper(MapperInfo mapperInfo, GeneratorExecutionContext context)
     {
-        var asyncPrefix = asynchronous ? "Async" : "";
-        var className = $"{asyncPrefix}{mapperInfo.MapperClass.Name}";
+        var asynchronous = mapperInfo.IsAsyncMode();
+        var className = mapperInfo.MapperClass.Name;
         var fileName = $"{className}.g.cs";
         var template = new MapperTemplate(mapperInfo, asynchronous);
         

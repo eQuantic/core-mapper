@@ -1,29 +1,23 @@
 using System.Diagnostics.CodeAnalysis;
+using eQuantic.Mapper.Generator.Extensions;
 using Microsoft.CodeAnalysis;
 
 namespace eQuantic.Mapper.Generator;
 
 [ExcludeFromCodeCoverage]
-internal class MapperInfo
+internal class MapperInfo(
+    INamedTypeSymbol mapperClass,
+    INamedTypeSymbol sourceClass,
+    INamedTypeSymbol destinationClass,
+    INamedTypeSymbol? contextClass,
+    bool verifyNullability)
 {
-    public INamedTypeSymbol MapperClass { get; }
+    public INamedTypeSymbol MapperClass { get; } = mapperClass;
 
-    public INamedTypeSymbol SourceClass { get; }
-    public INamedTypeSymbol DestinationClass { get; }
-    public INamedTypeSymbol? ContextClass { get; }
-    public bool VerifyNullability { get; }
-    
-    public MapperInfo(
-        INamedTypeSymbol mapperClass, 
-        INamedTypeSymbol sourceClass, 
-        INamedTypeSymbol destinationClass, 
-        INamedTypeSymbol? contextClass,
-        bool verifyNullability)
-    {
-        MapperClass = mapperClass;
-        SourceClass = sourceClass;
-        DestinationClass = destinationClass;
-        ContextClass = contextClass;
-        VerifyNullability = verifyNullability;
-    }
+    public INamedTypeSymbol SourceClass { get; } = sourceClass;
+    public INamedTypeSymbol DestinationClass { get; } = destinationClass;
+    public INamedTypeSymbol? ContextClass { get; } = contextClass;
+    public bool VerifyNullability { get; } = verifyNullability;
+
+    public bool IsAsyncMode() => MapperClass.AllInterfaces.Any(o => o.FullName() == "eQuantic.Mapper.IAsyncMapper");
 }
