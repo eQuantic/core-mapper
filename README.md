@@ -118,6 +118,15 @@ public partial class ExampleMapper : IMapper
 }
 ```
 
+or
+
+```csharp
+[Mapper(typeof(ExampleA), typeof(ExampleB))]
+public partial class AsyncExampleMapper : IAsyncMapper
+{
+}
+```
+
 ### The application
 
 ```csharp
