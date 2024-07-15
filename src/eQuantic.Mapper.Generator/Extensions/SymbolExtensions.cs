@@ -340,6 +340,11 @@ public static class SymbolExtensions
             _ => false
         };
     }
+
+    public static ITypeSymbol? GetUnderlyingType(this ITypeSymbol? type)
+    {
+        return !IsNullable(type) ? null : type!.GetFirstTypeArgument();
+    }
     
     public static bool IsNullable(this ITypeSymbol? type)
     {

@@ -5,7 +5,10 @@
 <#
     if (destProperty.Type.IsEnum() && srcProperty.Type.IsEnum())
     {
-        if (destProperty.Type.TryFullName() == srcProperty.Type.TryFullName())
+        var srcPropertyType = srcProperty.Type.GetUnderlyingType() ?? srcProperty.Type;
+        var destPropertyType = destProperty.Type.GetUnderlyingType() ?? destProperty.Type;
+        
+        if (destPropertyType.TryFullName() == srcPropertyType.TryFullName())
         {
             if (srcProperty.Type.IsNullable())
             {
@@ -32,9 +35,28 @@
         }
         else
         {
+            if (srcProperty.Type.IsNullable())
+            {
+                if (verifyNullability)
+                {
 #>
-            destination.<#=destProperty.Name#> = (<#=destProperty.Type.Name#>)(int)source.<#=srcProperty.Name#>;
+            if (source.<#=srcProperty.Name#>.HasValue)
+                destination.<#=destProperty.Name#> = (<#=destProperty.Type.Name#>)(int)source.<#=srcProperty.Name#>.Value;
 <#
+                }
+                else
+                {
+#>
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>.HasValue ? (<#=destProperty.Type.Name#>)(int)source.<#=srcProperty.Name#>.Value : default;
+<#
+                }
+            }
+            else
+            {
+#>
+            destination.<#= destProperty.Name #> = (<#= destProperty.Type.Name #>)(int)source.<#= srcProperty.Name #>;
+<#
+            }
         }
     }
     else if ((destProperty.Type.IsEnum() && srcProperty.Type.IsNumeric()) ||
