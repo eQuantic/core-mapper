@@ -98,7 +98,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write("(IMapperFactory mapperFactory)\n\t\t{\n\t\t\t_mapperFactory = mapperFactory;\n\t\t}\n\n\t\t#nullable enable\n\t\tpublic ");
+            this.Write("(IMapperFactory mapperFactory)\n\t\t{\n\t\t\t_mapperFactory = mapperFactory;\n\t\t}\n\n\t\t#nullable enable\n\t\tpublic virtual ");
             
             #line 41 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(returnTypeName));
@@ -133,7 +133,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write("());\n\t\t}\n\t\t#nullable disable\n\n\t\t#nullable enable\n\t\tpublic ");
+            this.Write("());\n\t\t}\n\t\t#nullable disable\n\n\t\t#nullable enable\n\t\tpublic virtual ");
             
             #line 48 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(asynchronous ? "async ": ""));

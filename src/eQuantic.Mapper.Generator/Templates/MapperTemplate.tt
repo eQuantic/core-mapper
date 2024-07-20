@@ -38,14 +38,14 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 		}
 
 		#nullable enable
-		public <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source)
+		public virtual <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source)
 		{
 			return Map<#= asyncPrefix #>(source, new <#= destClassName #>());
 		}
 		#nullable disable
 
 		#nullable enable
-		public <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination)
+		public virtual <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination)
 		{
 			if (source == null)
 			{
