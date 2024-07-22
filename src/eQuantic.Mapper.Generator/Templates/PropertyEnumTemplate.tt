@@ -8,6 +8,7 @@
         var srcPropertyType = srcProperty.Type.GetUnderlyingType() ?? srcProperty.Type;
         var destPropertyType = destProperty.Type.GetUnderlyingType() ?? destProperty.Type;
         
+        // Same type
         if (destPropertyType.TryFullName() == srcPropertyType.TryFullName())
         {
             if (srcProperty.Type.IsNullable())
@@ -21,9 +22,19 @@
                 }
                 else
                 {
+                    if (destProperty.Type.IsNullable())
+                    {
+#>
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>;
+<#
+                    }
+                    else
+                    {
 #>
             destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#> ?? default;
 <#
+                    }
+
                 }
             }
             else
@@ -33,9 +44,9 @@
 <#
             }
         }
-        else
+        else // Different types
         {
-            if (srcProperty.Type.IsNullable())
+            if (srcProperty.Type.IsNullable()) // Nullable source
             {
                 if (verifyNullability)
                 {
@@ -46,9 +57,18 @@
                 }
                 else
                 {
+                    if (destProperty.Type.IsNullable())
+                    {
+#>
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>.HasValue ? (<#=destProperty.Type.Name#>)(int)source.<#=srcProperty.Name#>.Value : null;
+<#
+                    }
+                    else
+                    {
 #>
             destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>.HasValue ? (<#=destProperty.Type.Name#>)(int)source.<#=srcProperty.Name#>.Value : default;
 <#
+                    }
                 }
             }
             else

@@ -18,7 +18,7 @@ namespace eQuantic.Mapper.Generator.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+    #line 1 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class PropertyDefaultTemplate : PropertyDefaultTemplateBase
     {
@@ -29,7 +29,7 @@ namespace eQuantic.Mapper.Generator.Templates
         public virtual string TransformText()
         {
             
-            #line 5 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 5 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
     if (srcProperty.Type.IsNullable())
     {
@@ -44,28 +44,28 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("\n            if (!string.IsNullOrEmpty( source.");
             
-            #line 15 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 15 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" ))\n                destination.");
             
-            #line 16 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 16 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 16 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 16 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 17 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 17 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
             }
             else
@@ -78,21 +78,21 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 24 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 24 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 24 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 24 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 25 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 25 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
                 else
@@ -103,33 +103,33 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 30 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 30 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = string.IsNullOrEmpty( source.");
             
-            #line 30 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 30 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" ) ? string.Empty : source.");
             
-            #line 30 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 30 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 31 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 31 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
             }
         }
-        else if (srcType.IsNumeric())
+        else if (srcType.IsNumeric() || srcType.IsBoolean())
         {
             if (verifyNullability)
             {
@@ -139,28 +139,28 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("\n            if (source.");
             
-            #line 41 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 41 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(".HasValue)\n                destination.");
             
-            #line 42 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 42 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 42 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 42 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(".Value;\n");
             
-            #line 43 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 43 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
             }
             else
@@ -173,21 +173,21 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 50 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 50 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 50 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 50 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 51 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 51 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
                 else
@@ -198,21 +198,28 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 56 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 56 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 56 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 56 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write(" ?? 0;\n");
+            this.Write(" ?? ");
             
-            #line 57 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 56 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(srcType.GetDefaultValue()));
+            
+            #line default
+            #line hidden
+            this.Write(";\n");
+            
+            #line 57 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
             }
@@ -227,28 +234,28 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("\n            if (source.");
             
-            #line 67 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 67 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" != null)\n                destination.");
             
-            #line 68 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 68 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 68 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 68 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 69 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 69 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
             }
             else
@@ -261,21 +268,21 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 76 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 76 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 76 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 76 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 77 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 77 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
                 else
@@ -286,28 +293,28 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 82 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 82 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 82 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 82 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" != null ? source.");
             
-            #line 82 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 82 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" : default;\n");
             
-            #line 83 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 83 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
                 }
             }
@@ -321,21 +328,21 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 91 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 91 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 91 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 91 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(";\n");
             
-            #line 92 "/Users/edgarmesquita/projects/github/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
+            #line 92 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyDefaultTemplate.tt"
 
     }
 

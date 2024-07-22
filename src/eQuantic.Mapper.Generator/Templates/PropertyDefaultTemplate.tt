@@ -32,7 +32,7 @@
                 }
             }
         }
-        else if (srcType.IsNumeric())
+        else if (srcType.IsNumeric() || srcType.IsBoolean())
         {
             if (verifyNullability)
             {
@@ -53,7 +53,7 @@
                 else
                 {
 #>
-            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#> ?? 0;
+            destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#> ?? <#= srcType.GetDefaultValue() #>;
 <#
                 }
             }

@@ -300,6 +300,16 @@ public static class SymbolExtensions
         
         return type.IsArray() || type.IsEnumerable() || type.IsCollection() || type.IsList() || type.IsHashSet();
     }
+
+    public static bool IsBoolean(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return false;
+        }
+
+        return type.SpecialType == SpecialType.System_Boolean;
+    }
     
     public static bool IsPrimitive(this ITypeSymbol? type)
     {
@@ -339,6 +349,22 @@ public static class SymbolExtensions
             SpecialType.System_Double => true,
             _ => false
         };
+    }
+
+    public static string GetDefaultValue(this ITypeSymbol? type)
+    {
+        if (type == null)
+        {
+            return "default";
+        }
+
+        if (type.IsNumeric())
+            return "0";
+        
+        if (type.IsBoolean())
+            return "false";
+
+        return "default";
     }
 
     public static ITypeSymbol? GetUnderlyingType(this ITypeSymbol? type)

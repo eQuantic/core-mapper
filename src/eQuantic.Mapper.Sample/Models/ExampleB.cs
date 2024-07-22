@@ -16,7 +16,7 @@ public class ExampleB : ExampleBase
     public string Code { get; set; } = string.Empty;
     
     public string? Text { get; set; }
-    
+    public bool Boolean { get; set; }
     public ExampleEnumA EnumA { get; set; }
     public ExampleEnumA? NullableEnumA { get; set; }
     public ExampleEnumB Enum { get; set; }
