@@ -63,6 +63,14 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         list.AddRange(sourceClass.ReadWriteScalarProperties());
         return list;
     }
+
+    private static string GetClassName(INamedTypeSymbol namedTypeSymbol)
+    {
+        var classFullNamespace = namedTypeSymbol.FullNamespace();
+        if (classFullNamespace!.Contains($".{namedTypeSymbol.Name}.") || classFullNamespace.EndsWith($".{namedTypeSymbol.Name}"))
+            return $"{classFullNamespace}.{namedTypeSymbol.Name}";
+        return namedTypeSymbol.Name;
+    }
     
     private HashSet<string> GetNamespaces()
     {
@@ -76,19 +84,13 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         var srcClassFullNamespace = mapperInfo.SourceClass.FullNamespace();
         if (!string.IsNullOrEmpty(srcClassFullNamespace))
         {
-            if (srcClassFullNamespace!.Contains($".{mapperInfo.SourceClass.Name}.") || srcClassFullNamespace.EndsWith($".{mapperInfo.SourceClass.Name}"))
-                namespaces.Add($"{mapperInfo.SourceClass.Name} = {srcClassFullNamespace}.{mapperInfo.SourceClass.Name}");
-            
-            namespaces.Add(srcClassFullNamespace);
+            namespaces.Add(srcClassFullNamespace!);
         }
 
         var destClassFullNamespace = mapperInfo.DestinationClass.FullNamespace();
         if (!string.IsNullOrEmpty(destClassFullNamespace))
         {
-            if (destClassFullNamespace!.Contains($".{mapperInfo.DestinationClass.Name}.") || destClassFullNamespace.EndsWith($".{mapperInfo.DestinationClass.Name}"))
-                namespaces.Add($"{mapperInfo.DestinationClass.Name} = {destClassFullNamespace}.{mapperInfo.DestinationClass.Name}");
-            
-            namespaces.Add(destClassFullNamespace);
+            namespaces.Add(destClassFullNamespace!);
         }
 
         var srcProperties = GetPropertiesNamespaces(mapperInfo.SourceClass);

@@ -33,9 +33,9 @@ namespace eQuantic.Mapper.Generator.Templates
 
     var asyncPrefix = asynchronous ? "Async" : "";
     var className = mapperInfo.MapperClass.Name;
-    var srcClassName = mapperInfo.SourceClass.Name;
+    var srcClassName = GetClassName(mapperInfo.SourceClass);
     var srcProperties = GetProperties(mapperInfo.SourceClass);
-    var destClassName = mapperInfo.DestinationClass.Name;
+    var destClassName = GetClassName(mapperInfo.DestinationClass);
     var destProperties = GetProperties(mapperInfo.DestinationClass);
     var interfaceName = $"I{asyncPrefix}Mapper<{srcClassName}, {destClassName}>";
     var returnTypeName = asynchronous ? $"Task<{destClassName}?>" : $"{destClassName}?";
