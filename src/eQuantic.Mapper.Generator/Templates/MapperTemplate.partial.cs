@@ -76,13 +76,19 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         var srcClassFullNamespace = mapperInfo.SourceClass.FullNamespace();
         if (!string.IsNullOrEmpty(srcClassFullNamespace))
         {
-            namespaces.Add(srcClassFullNamespace!);
+            if (srcClassFullNamespace!.Contains($".{mapperInfo.SourceClass.Name}.") || srcClassFullNamespace.EndsWith($".{mapperInfo.SourceClass.Name}"))
+                namespaces.Add($"{mapperInfo.SourceClass.Name} = {srcClassFullNamespace}.{mapperInfo.SourceClass.Name}");
+            
+            namespaces.Add(srcClassFullNamespace);
         }
 
         var destClassFullNamespace = mapperInfo.DestinationClass.FullNamespace();
         if (!string.IsNullOrEmpty(destClassFullNamespace))
         {
-            namespaces.Add(destClassFullNamespace!);
+            if (destClassFullNamespace!.Contains($".{mapperInfo.DestinationClass.Name}.") || destClassFullNamespace.EndsWith($".{mapperInfo.DestinationClass.Name}"))
+                namespaces.Add($"{mapperInfo.DestinationClass.Name} = {destClassFullNamespace}.{mapperInfo.DestinationClass.Name}");
+            
+            namespaces.Add(destClassFullNamespace);
         }
 
         var srcProperties = GetPropertiesNamespaces(mapperInfo.SourceClass);
