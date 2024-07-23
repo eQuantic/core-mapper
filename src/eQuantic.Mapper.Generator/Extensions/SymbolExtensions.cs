@@ -241,6 +241,12 @@ public static class SymbolExtensions
         return "where " + symbol.Name + " : " + string.Join(", ", factors);
     }
 
+    public static bool Is<T>(this ITypeSymbol? type)
+    {
+        var expectedType = typeof(T);
+        return type.TryFullName() == expectedType.FullName;
+    }
+    
     public static bool IsString(this ITypeSymbol? type)
     {
         if (type == null)
@@ -364,6 +370,12 @@ public static class SymbolExtensions
         if (type.IsBoolean())
             return "false";
 
+        if (type.Is<Guid>())
+            return "Guid.Empty";
+        
+        if (type.Is<DateTime>())
+            return "new DateTime()";
+        
         return "default";
     }
 

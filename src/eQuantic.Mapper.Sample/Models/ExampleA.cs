@@ -10,6 +10,8 @@ public class ExampleA
     
     public string? Text { get; set; }
     public bool? Boolean { get; set; }
+    public Guid? Guid { get; set; }
+    public DateTime? DateTime { get; set; }
     public ExampleEnumA EnumA { get; set; }
     public ExampleEnumA? NullableEnumA { get; set; }
     public ExampleEnumA Enum { get; set; }
