@@ -74,7 +74,8 @@ public class MapperFactory : IMapperFactory
     /// <typeparam name="TContext">The context</typeparam>
     /// <param name="context">The context</param>
     /// <returns>The asynchronous mapper</returns>
-    public IAsyncMapper<TSource, TDestination, TContext>? GetAsyncMapper<TSource, TDestination, TContext>(TContext context)
+    public IAsyncMapper<TSource, TDestination, TContext>? GetAsyncMapper<TSource, TDestination, TContext>(
+        TContext context)
     {
         var service = _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination, TContext>));
 
@@ -86,5 +87,48 @@ public class MapperFactory : IMapperFactory
         var mapper = (IAsyncMapper<TSource, TDestination, TContext>)service;
         mapper.Context = context;
         return mapper;
+    }
+
+    /// <summary>
+    /// Gets any mapper (sync or async)
+    /// </summary>
+    /// <typeparam name="TSource">The source</typeparam>
+    /// <typeparam name="TDestination">The destination</typeparam>
+    /// <returns></returns>
+    public IAnyMapper<TSource, TDestination>? GetAnyMapper<TSource, TDestination>()
+    {
+        var mapper = _serviceProvider.GetService(typeof(IMapper<TSource, TDestination>));
+        var asyncMapper = _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination>));
+        if (mapper != null || asyncMapper != null)
+        {
+            return new MapperWrapper<TSource, TDestination>((IMapper<TSource, TDestination>?)mapper,
+                (IAsyncMapper<TSource, TDestination>?)asyncMapper);
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Gets any mapper (sync or async) using the specified context
+    /// </summary>
+    /// <param name="context">The context</param>
+    /// <typeparam name="TSource">The source</typeparam>
+    /// <typeparam name="TDestination">The destination</typeparam>
+    /// <typeparam name="TContext">The context</typeparam>
+    /// <returns></returns>
+    public IAnyMapper<TSource, TDestination, TContext>? GetAnyMapper<TSource, TDestination, TContext>(TContext context)
+    {
+        var mapper = _serviceProvider.GetService(typeof(IMapper<TSource, TDestination, TContext>)) ??
+                     _serviceProvider.GetService(typeof(IMapper<TSource, TDestination>));
+        var asyncMapper = _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination, TContext>)) ?? 
+                    _serviceProvider.GetService(typeof(IAsyncMapper<TSource, TDestination>));
+
+        if (mapper != null || asyncMapper != null)
+        {
+            return new MapperWrapper<TSource, TDestination, TContext>((IMapper<TSource, TDestination>?)mapper,
+                (IAsyncMapper<TSource, TDestination>?)asyncMapper, context);
+        }
+        
+        return null;
     }
 }
