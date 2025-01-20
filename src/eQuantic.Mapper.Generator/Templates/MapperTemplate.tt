@@ -38,14 +38,14 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 		}
 
 		#nullable enable
-		public virtual <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source)
+		public virtual <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source<#= asynchronous ? ", CancellationToken cancellationToken = default": "" #>)
 		{
-			return Map<#= asyncPrefix #>(source, new <#= destClassName #>());
+			return Map<#= asyncPrefix #>(source, new <#= destClassName #>()<#= asynchronous ? ", cancellationToken": "" #>);
 		}
 		#nullable disable
 
 		#nullable enable
-		public virtual <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination)
+		public virtual <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination<#= asynchronous ? ", CancellationToken cancellationToken = default": "" #>)
 		{
 			if (source == null)
 			{
@@ -54,7 +54,7 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 
 			if (destination == null)
 			{
-				return <#= asynchronous ? "await ": "" #>Map<#= asyncPrefix #>(source);
+				return <#= asynchronous ? "await ": "" #>Map<#= asyncPrefix #>(source<#= asynchronous ? ", cancellationToken": "" #>);
 			}
 <#
     if (asynchronous)

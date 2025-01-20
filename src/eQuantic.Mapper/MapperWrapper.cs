@@ -30,17 +30,17 @@ internal class MapperWrapper<TSource, TDestination> : IAnyMapper<TSource, TDesti
             : (_asyncMapper != null ? Task.Run(async () => await _asyncMapper.MapAsync(source, destination)).Result : default);
     }
 
-    public Task<TDestination?> MapAsync(TSource? source)
+    public Task<TDestination?> MapAsync(TSource? source, CancellationToken cancellationToken = default)
     {
         return _asyncMapper != null
-            ? _asyncMapper.MapAsync(source)
+            ? _asyncMapper.MapAsync(source, cancellationToken)
             : (_mapper != null ? Task.FromResult(_mapper.Map(source)) : Task.FromResult((TDestination?)default));
     }
 
-    public Task<TDestination?> MapAsync(TSource? source, TDestination? destination)
+    public Task<TDestination?> MapAsync(TSource? source, TDestination? destination, CancellationToken cancellationToken = default)
     {
         return _asyncMapper != null
-            ? _asyncMapper.MapAsync(source, destination)
+            ? _asyncMapper.MapAsync(source, destination, cancellationToken)
             : (_mapper != null ? Task.FromResult(_mapper.Map(source, destination)) : Task.FromResult((TDestination?)default));
     }
 }

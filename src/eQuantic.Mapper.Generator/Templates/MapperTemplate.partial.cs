@@ -37,8 +37,8 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         {
             new PropertyStringToPrimitiveTemplate(srcProperty, destProperty, mapperInfo.VerifyNullability),
             new PropertyEnumTemplate(srcProperty, destProperty, mapperInfo.VerifyNullability),
-            new PropertyEnumerableTemplate(srcProperty, destProperty, mapperInfo.VerifyNullability),
-            new PropertyObjectTemplate(srcProperty, destProperty, mapperInfo.VerifyNullability),
+            new PropertyEnumerableTemplate(srcProperty, destProperty, asynchronous, mapperInfo.VerifyNullability),
+            new PropertyObjectTemplate(srcProperty, destProperty, asynchronous, mapperInfo.VerifyNullability),
             new PropertyDefaultTemplate(srcProperty, destProperty, mapperInfo.VerifyNullability)
         };
 
@@ -81,6 +81,9 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
             "System.Linq",
             "eQuantic.Mapper"
         };
+        if(asynchronous)
+            namespaces.Add("System.Threading.Tasks");
+        
         var srcClassFullNamespace = mapperInfo.SourceClass.FullNamespace();
         if (!string.IsNullOrEmpty(srcClassFullNamespace))
         {

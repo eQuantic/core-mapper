@@ -7,7 +7,9 @@ namespace eQuantic.Mapper.Generator.Templates;
 internal partial class PropertyObjectTemplate(
     IPropertySymbol srcProperty, 
     IPropertySymbol destProperty,
-    bool verifyNullability = false): IPropertyTemplate
+    bool asynchronous = false,
+    bool verifyNullability = false
+    ): IPropertyTemplate
 {
     public bool Accepted()
     {
