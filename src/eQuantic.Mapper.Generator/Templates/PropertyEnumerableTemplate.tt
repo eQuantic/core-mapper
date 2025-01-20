@@ -61,7 +61,7 @@
                     foreach(var srcItemOf<#=srcProperty.Name#> in source.<#=srcProperty.Name#>)
                     {
                         var mappedItemOf<#=destProperty.Name#> = await mapper.MapAsync(srcItemOf<#=srcProperty.Name#>, cancellationToken);
-                        listOf<#=destProperty.Name#>.Add(mappedItemOf<#=destProperty.Name#>);
+                        listOf<#=destProperty.Name#>.Add(mappedItemOf<#=destProperty.Name#>!);
                     }
                     destination.<#=destProperty.Name#> = listOf<#=destProperty.Name#><#=GetCastMethod(destProperty)#>;
 <#

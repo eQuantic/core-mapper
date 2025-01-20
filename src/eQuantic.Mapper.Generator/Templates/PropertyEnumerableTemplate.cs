@@ -265,7 +265,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write(");\r\n                    }\r\n                    destination.");
+            this.Write("!);\r\n                    }\r\n                    destination.");
             
             #line 66 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
