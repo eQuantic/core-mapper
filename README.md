@@ -152,21 +152,46 @@ app.Run();
 
 ### Manual customization
 
-If you need customize the auto-generated mapper, just override `Before` or/and `After` methods:
+If you need customize the auto-generated mapper, just create delegations for `OnBeforeMap` or/and `OnAfterMap` events:
 
 ```csharp
 [Mapper(typeof(ExampleA), typeof(ExampleB))]
 public partial class ExampleMapper : IMapper
 {
-    partial void AfterMap(ExampleA source, ExampleB destination)
+    partial void AfterConstructor()
     {
-        if(source.Name == "Test")
+        OnAfterMap += (s, e) => 
         {
-            destination.Name = "Empty";
-        }
+            if(e.Source.Name == "Test")
+            {
+                e.Destination.Name = "Empty";
+            }
+        };
     }
 }
 ```
+
+If you need to modify the generated constructor, just set `OmitConstructor` on attribute and create the new one:
+
+```csharp
+[Mapper(typeof(ExampleA), typeof(ExampleB), OmitConstructor = true)]
+public partial class ExampleMapper : IMapper
+{
+    public ExampleMapper(IMapperFactory mapperFactory)
+    {
+        MapperFactory = mapperFactory;
+        
+        OnAfterMap += (s, e) => 
+        {
+            if(e.Source.Name == "Test")
+            {
+                e.Destination.Name = "Empty";
+            }
+        };
+    }
+}
+```
+
 ## Debugging
 
 Inside `MapperGenerator` on `Initialize` method use:

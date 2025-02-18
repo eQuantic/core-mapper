@@ -49,7 +49,7 @@
             }
 #>
             {
-                var mapper = _mapperFactory.GetAnyMapper<<#=srcType!.Name#>, <#=destType!.Name#>>();
+                var mapper = MapperFactory?.GetAnyMapper<<#=srcType!.Name#>, <#=destType!.Name#>>();
                 if (mapper != null)
                 {
 <#

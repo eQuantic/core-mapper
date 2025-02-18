@@ -3,7 +3,7 @@
 <#@ import namespace="System.Collections.Generic" #>
             if (source.<#= srcProperty.Name #> != null)
             {
-                var mapper = _mapperFactory.GetAnyMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
+                var mapper = MapperFactory?.GetAnyMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
                 if (mapper != null)
                 {
                     var mapped<#= destProperty.Name #> = <#= asynchronous ? "await ": "" #>mapper.Map<#= asynchronous ? "Async": "" #>(source.<#=srcProperty.Name #><#= asynchronous ? ", cancellationToken": "" #>);

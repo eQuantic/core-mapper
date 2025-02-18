@@ -34,7 +34,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write(" != null)\r\n            {\r\n                var mapper = _mapperFactory.GetAnyMapper<");
+            this.Write(" != null)\r\n            {\r\n                var mapper = MapperFactory?.GetAnyMapper<");
             
             #line 6 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyObjectTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Type.Name));

@@ -184,7 +184,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write("            {\r\n                var mapper = _mapperFactory.GetAnyMapper<");
+            this.Write("            {\r\n                var mapper = MapperFactory?.GetAnyMapper<");
             
             #line 52 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcType!.Name));
