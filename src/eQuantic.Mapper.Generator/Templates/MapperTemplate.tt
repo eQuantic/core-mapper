@@ -150,7 +150,9 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 
 	        for (var i = 0; i < invocationList.Length; i++)
 	        {
-	            handlerTasks[i] = ((Func<object, MapEventArgs<<#= srcClassName #>, <#= destClassName #>>, Task>)invocationList[i])(this, eventArgs);
+				var invocationItem = Delegate.CreateDelegate(typeof(Func<object, MapEventArgs<<#= srcClassName #>, <#= destClassName #>>, Task>),
+                	invocationList[i].Target, invocationList[i].Method);
+	            handlerTasks[i] = ((Func<object, MapEventArgs<<#= srcClassName #>, <#= destClassName #>>, Task>)invocationItem)(this, eventArgs);
 	        }
 
 	        await Task.WhenAll(handlerTasks);

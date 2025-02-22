@@ -462,7 +462,7 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write("> eventArgs)\r\n\t    {\r\n\t        if (handler == null)\r\n\t        {\r\n\t            return;\r\n\t        }\r\n\r\n\t        var invocationList = handler.GetInvocationList();\r\n\t        var handlerTasks = new Task[invocationList.Length];\r\n\r\n\t        for (var i = 0; i < invocationList.Length; i++)\r\n\t        {\r\n\t            handlerTasks[i] = ((Func<object, MapEventArgs<");
+            this.Write("> eventArgs)\r\n\t    {\r\n\t        if (handler == null)\r\n\t        {\r\n\t            return;\r\n\t        }\r\n\r\n\t        var invocationList = handler.GetInvocationList();\r\n\t        var handlerTasks = new Task[invocationList.Length];\r\n\r\n\t        for (var i = 0; i < invocationList.Length; i++)\r\n\t        {\r\n\t\t\t\tvar invocationItem = Delegate.CreateDelegate(typeof(Func<object, MapEventArgs<");
             
             #line 153 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcClassName));
@@ -476,9 +476,23 @@ namespace eQuantic.Mapper.Generator.Templates
             
             #line default
             #line hidden
-            this.Write(">, Task>)invocationList[i])(this, eventArgs);\r\n\t        }\r\n\r\n\t        await Task.WhenAll(handlerTasks);\r\n\t    }\r\n\t\t#nullable disable\r\n");
+            this.Write(">, Task>),\r\n                \tinvocationList[i].Target, invocationList[i].Method);\r\n\t            handlerTasks[i] = ((Func<object, MapEventArgs<");
             
-            #line 159 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 155 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(srcClassName));
+            
+            #line default
+            #line hidden
+            this.Write(", ");
+            
+            #line 155 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(destClassName));
+            
+            #line default
+            #line hidden
+            this.Write(">, Task>)invocationItem)(this, eventArgs);\r\n\t        }\r\n\r\n\t        await Task.WhenAll(handlerTasks);\r\n\t    }\r\n\t\t#nullable disable\r\n");
+            
+            #line 161 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
 
     }
     else
@@ -489,35 +503,35 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("\t\t#nullable enable\r\n\t\tprivate void InvokeHandler(OnMapHandler<");
             
-            #line 165 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 167 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcClassName));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 165 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 167 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destClassName));
             
             #line default
             #line hidden
             this.Write(">? handler, MapEventArgs<");
             
-            #line 165 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 167 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcClassName));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 165 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 167 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destClassName));
             
             #line default
             #line hidden
             this.Write("> eventArgs)\r\n\t    {\r\n\t\t\tif (handler == null)\r\n\t        {\r\n\t            return;\r\n\t        }\r\n\r\n\t\t\thandler(this, eventArgs);\r\n\t\t}\r\n\t\t#nullable disable\r\n");
             
-            #line 175 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
+            #line 177 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\MapperTemplate.tt"
 
     }
 
