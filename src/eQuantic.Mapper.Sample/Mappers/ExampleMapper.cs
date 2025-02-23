@@ -13,7 +13,14 @@ public partial class ExampleMapper : IMapper
 }
 
 [Mapper(typeof(ExampleA), typeof(ExampleB), OmitConstructor = true)]
-public partial class ExampleMapperWithCustomConstructor(IMapperFactory mapperFactory) : IMapper;
+public partial class ExampleMapperWithCustomConstructor : IMapper
+{
+    public ExampleMapperWithCustomConstructor(IMapperFactory mapperFactory)
+    {
+        MapperFactory = mapperFactory;
+        OnAfterMap += (s, e) => { };
+    }
+}
 
 [Mapper(typeof(ExampleA), typeof(ExampleB))]
 public partial class AsyncExampleMapper : IAsyncMapper
