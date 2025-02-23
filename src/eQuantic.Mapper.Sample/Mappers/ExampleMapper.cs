@@ -8,6 +8,7 @@ public partial class ExampleMapper : IMapper
 {
     partial void AfterConstructor()
     {
+        OnBeforeMap += (s, e) => { };
         OnAfterMap += (s, e) => { };
     }
 }
