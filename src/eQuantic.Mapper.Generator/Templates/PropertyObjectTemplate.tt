@@ -3,9 +3,26 @@
 <#@ import namespace="System.Collections.Generic" #>
             if (source.<#= srcProperty.Name #> != null)
             {
-                var mapper = _mapperFactory.GetMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
+                var mapper = MapperFactory?.GetAnyMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
                 if (mapper != null)
                 {
-                    destination.<#= destProperty.Name #> = mapper.Map(source.<#=srcProperty.Name #>);
+                    var mapped<#= destProperty.Name #> = <#= asynchronous ? "await ": "" #>mapper.Map<#= asynchronous ? "Async": "" #>(source.<#=srcProperty.Name #><#= asynchronous ? ", cancellationToken": "" #>);
+<#
+    if (verifyNullability)
+    {
+#>
+                    if (mapped<#= destProperty.Name #> != null)
+                    {
+                        destination.<#= destProperty.Name #> = mapped<#= destProperty.Name #>;
+                    }
+<#
+    }
+    else
+    {
+#>
+                    destination.<#= destProperty.Name #> = mapped<#= destProperty.Name #>!;
+<#
+    }
+#>
                 }
             }

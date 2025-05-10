@@ -20,7 +20,7 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
 
             var anyClass = (INamedTypeSymbol?)context.SemanticModel.GetDeclaredSymbol(context.Node);
 
-            if (anyClass?.BaseType == null || 
+            if (anyClass?.BaseType == null ||
                 anyClass.AllInterfaces.Any(o => o.FullName() == "eQuantic.Mapper.IMapper") != true)
             {
                 return;
@@ -41,26 +41,37 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
             }
 
             var destination = (INamedTypeSymbol?)generatedAttr.ConstructorArguments[1].Value;
-            
+
             if (destination == null)
             {
                 return;
             }
 
-            var thirdArg = generatedAttr.ConstructorArguments.Length == 3 ? 
-                generatedAttr.ConstructorArguments[2].Value : 
-                null;
-            
-            var fourthArg = generatedAttr.ConstructorArguments.Length == 4 ? 
-                generatedAttr.ConstructorArguments[3].Value : 
-                null;
+            var thirdArg = generatedAttr.ConstructorArguments.Length == 3
+                ? generatedAttr.ConstructorArguments[2].Value
+                : null;
 
-            var mapperContext = fourthArg != null ? 
-                (INamedTypeSymbol?)thirdArg : 
-                (thirdArg is null or bool ? null : (INamedTypeSymbol?)thirdArg);
+            var fourthArg = generatedAttr.ConstructorArguments.Length == 4
+                ? generatedAttr.ConstructorArguments[3].Value
+                : null;
 
-            var verifyNullability = fourthArg is true || thirdArg is true;
-            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext, verifyNullability));
+            var fifthArg = generatedAttr.ConstructorArguments.Length == 5
+                ? generatedAttr.ConstructorArguments[4].Value
+                : null;
+
+            var mapperContextArg = generatedAttr.GetNamedArgument("Context");
+            var mapperContext = mapperContextArg != null ? (INamedTypeSymbol?)mapperContextArg :
+                thirdArg is not null and not bool ? (INamedTypeSymbol?)thirdArg : null;
+
+            var verifyNullabilityArg = generatedAttr.GetNamedArgument("VerifyNullability");
+            var verifyNullability = verifyNullabilityArg is true ||
+                                    ((thirdArg is not bool && fourthArg is true) || thirdArg is true);
+
+            var omitConstructorArg = generatedAttr.GetNamedArgument("OmitConstructor");
+            var omitConstructor = omitConstructorArg is true ||
+                                  (fifthArg is true || (thirdArg is bool && fourthArg is true));
+
+            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext, verifyNullability, omitConstructor));
         }
         catch (Exception ex)
         {

@@ -9,7 +9,9 @@
     var srcProperties = GetProperties(mapperInfo.SourceClass);
     var destClassName = GetClassName(mapperInfo.DestinationClass);
     var destProperties = GetProperties(mapperInfo.DestinationClass);
-    var interfaceName = $"I{asyncPrefix}Mapper<{srcClassName}, {destClassName}>";
+    var hasContext = mapperInfo.ContextClass != null;
+    var ctxClassName = hasContext ? GetClassName(mapperInfo.ContextClass!) : "";
+    var interfaceName = $"I{asyncPrefix}Mapper<{srcClassName}, {destClassName}{(hasContext ? ", "+ctxClassName: "")}>";
     var returnTypeName = asynchronous ? $"Task<{destClassName}?>" : $"{destClassName}?";
     var namespaces = GetNamespaces();
 #>
@@ -27,25 +29,58 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 {
     public partial class <#= className #> : <#= interfaceName #>
     {
+		#nullable enable
+		/// <summary>
+		/// The event before map
+		/// </summary>
+		public event OnMapHandler<#= asyncPrefix #><<#= srcClassName #>, <#= destClassName #>>? OnBeforeMap;
+
+		/// <summary>
+		/// The event after map
+		/// </summary>
+		public event OnMapHandler<#= asyncPrefix #><<#= srcClassName #>, <#= destClassName #>>? OnAfterMap;
+		
         /// <summary>
 		/// The mapper factory
 		/// </summary>
-        private readonly IMapperFactory _mapperFactory;
+        protected readonly IMapperFactory? MapperFactory;
+		#nullable disable
 
-        public <#= className #>(IMapperFactory mapperFactory)
-		{
-			_mapperFactory = mapperFactory;
-		}
-
+<#
+    if (hasContext)
+    {
+#>
 		#nullable enable
-		public virtual <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source)
+		/// <summary>
+	    /// Gets or sets the value of the context
+	    /// </summary>
+		public <#= ctxClassName #>? Context { get; set; }
+		#nullable disable
+
+<#
+    }
+
+    if (!mapperInfo.OmitConstructor)
+    {
+#>
+		public <#= className #>(IMapperFactory mapperFactory)
 		{
-			return Map<#= asyncPrefix #>(source, new <#= destClassName #>());
+			MapperFactory = mapperFactory;
+			AfterConstructor();
+		}
+<#
+    }
+#>
+        
+		#nullable enable
+		public virtual <#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source<#= asynchronous ? ", CancellationToken cancellationToken = default": "" #>)
+		{
+			return Map<#= asyncPrefix #>(source, new <#= destClassName #>()<#= asynchronous ? ", cancellationToken": "" #>);
 		}
 		#nullable disable
 
 		#nullable enable
-		public virtual <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination)
+		public virtual <#= asynchronous ? "async ": "" #><#= returnTypeName #> Map<#= asyncPrefix #>(<#= srcClassName #>? source, <#= destClassName #>? destination<#= asynchronous ? ", CancellationToken cancellationToken = default": "" #>)
 		{
 			if (source == null)
 			{
@@ -54,21 +89,19 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 
 			if (destination == null)
 			{
-				return <#= asynchronous ? "await ": "" #>Map<#= asyncPrefix #>(source);
+				return <#= asynchronous ? "await ": "" #>Map<#= asyncPrefix #>(source<#= asynchronous ? ", cancellationToken": "" #>);
 			}
 <#
     if (asynchronous)
     {
 #>
-			Task? beforeTask = null;
-			BeforeMap(ref beforeTask, source, destination);
-			await (beforeTask ?? Task.CompletedTask);
+			await InvokeHandlerAsync(OnBeforeMap, new MapEventArgs<<#= srcClassName #>, <#= destClassName #>>(source, destination));
 <#
     }
     else
     {
 #>
-			BeforeMap(source, destination);
+			InvokeHandler(OnBeforeMap, new MapEventArgs<<#= srcClassName #>, <#= destClassName #>>(source, destination));
 <#
     }
 #>
@@ -83,17 +116,13 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
     if (asynchronous)
     {
 #>
-
-			Task? afterTask = null;
-			AfterMap(ref afterTask, source, destination);
-			await (afterTask ?? Task.CompletedTask);
+			await InvokeHandlerAsync(OnAfterMap, new MapEventArgs<<#= srcClassName #>, <#= destClassName #>>(source, destination));
 <#
     }
     else
     {
 #>
-
-			AfterMap(source, destination);
+			InvokeHandler(OnAfterMap, new MapEventArgs<<#= srcClassName #>, <#= destClassName #>>(source, destination));
 <#
     }
 #>
@@ -102,12 +131,51 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 		}
 		#nullable disable
 
-		#nullable enable
-		partial void BeforeMap(<#= asynchronous ? "ref Task? beforeTask, " : "" #><#= srcClassName #>? source, <#= destClassName #>? destination);
-		#nullable disable
+		partial void AfterConstructor();
 
+<#
+    if (asynchronous)
+    {
+#>
 		#nullable enable
-		partial void AfterMap(<#= asynchronous ? "ref Task? afterTask, " : "" #><#= srcClassName #>? source, <#= destClassName #>? destination);
+		private async Task InvokeHandlerAsync(OnMapHandlerAsync<<#= srcClassName #>, <#= destClassName #>>? handler, MapEventArgs<<#= srcClassName #>, <#= destClassName #>> eventArgs)
+	    {
+	        if (handler == null)
+	        {
+	            return;
+	        }
+
+	        var invocationList = handler.GetInvocationList();
+	        var handlerTasks = new Task[invocationList.Length];
+
+	        for (var i = 0; i < invocationList.Length; i++)
+	        {
+				var invocationItem = Delegate.CreateDelegate(typeof(Func<object, MapEventArgs<<#= srcClassName #>, <#= destClassName #>>, Task>),
+                	invocationList[i].Target, invocationList[i].Method);
+	            handlerTasks[i] = ((Func<object, MapEventArgs<<#= srcClassName #>, <#= destClassName #>>, Task>)invocationItem)(this, eventArgs);
+	        }
+
+	        await Task.WhenAll(handlerTasks);
+	    }
 		#nullable disable
+<#
+    }
+    else
+    {
+#>
+		#nullable enable
+		private void InvokeHandler(OnMapHandler<<#= srcClassName #>, <#= destClassName #>>? handler, MapEventArgs<<#= srcClassName #>, <#= destClassName #>> eventArgs)
+	    {
+			if (handler == null)
+	        {
+	            return;
+	        }
+
+			handler(this, eventArgs);
+		}
+		#nullable disable
+<#
+    }
+#>
     }
 }

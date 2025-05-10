@@ -10,7 +10,8 @@ internal class MapperInfo(
     INamedTypeSymbol sourceClass,
     INamedTypeSymbol destinationClass,
     INamedTypeSymbol? contextClass,
-    bool verifyNullability)
+    bool verifyNullability,
+    bool omitConstructor)
 {
     public INamedTypeSymbol MapperClass { get; } = mapperClass;
 
@@ -18,6 +19,7 @@ internal class MapperInfo(
     public INamedTypeSymbol DestinationClass { get; } = destinationClass;
     public INamedTypeSymbol? ContextClass { get; } = contextClass;
     public bool VerifyNullability { get; } = verifyNullability;
+    public bool OmitConstructor { get; } = omitConstructor;
 
     public bool IsAsyncMode() => MapperClass.AllInterfaces.Any(o => o.FullName() == "eQuantic.Mapper.IAsyncMapper");
 }

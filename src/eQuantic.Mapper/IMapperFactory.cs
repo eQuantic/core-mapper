@@ -28,7 +28,7 @@ public interface IMapperFactory
     /// </summary>
     /// <typeparam name="TSource">The source</typeparam>
     /// <typeparam name="TDestination">The destination</typeparam>
-    /// <returns>A mapper of t source and t destination</returns>
+    /// <returns>A mapper of source and destination</returns>
     IAsyncMapper<TSource, TDestination>? GetAsyncMapper<TSource, TDestination>();
 
     /// <summary>
@@ -38,6 +38,15 @@ public interface IMapperFactory
     /// <typeparam name="TDestination">The destination</typeparam>
     /// <typeparam name="TContext">The context</typeparam>
     /// <param name="context">The context</param>
-    /// <returns>A mapper of t source and t destination and t context</returns>
+    /// <returns>A mapper of source and destination and context</returns>
     IAsyncMapper<TSource, TDestination, TContext>? GetAsyncMapper<TSource, TDestination, TContext>(TContext context);
+
+    /// <summary>
+    /// Gets any mapper (sync or async)
+    /// </summary>
+    /// <typeparam name="TSource"></typeparam>
+    /// <typeparam name="TDestination"></typeparam>
+    /// <returns></returns>
+    IAnyMapper<TSource, TDestination>? GetAnyMapper<TSource, TDestination>();
+    IAnyMapper<TSource, TDestination, TContext>? GetAnyMapper<TSource, TDestination, TContext>(TContext context);
 }

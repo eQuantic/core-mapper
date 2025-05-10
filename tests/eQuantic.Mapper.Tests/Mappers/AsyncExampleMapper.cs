@@ -4,12 +4,12 @@ namespace eQuantic.Mapper.Tests.Mappers;
 
 public class AsyncExampleMapper : IAsyncMapper<ExampleA, ExampleB>
 {
-    public Task<ExampleB?> MapAsync(ExampleA? source)
+    public Task<ExampleB?> MapAsync(ExampleA? source, CancellationToken cancellationToken = default)
     {
-        return MapAsync(source, new ExampleB());
+        return MapAsync(source, new ExampleB(), cancellationToken);
     }
 
-    public async Task<ExampleB?> MapAsync(ExampleA? source, ExampleB? destination)
+    public async Task<ExampleB?> MapAsync(ExampleA? source, ExampleB? destination, CancellationToken cancellationToken = default)
     {
         if(source == null)
         {
@@ -18,7 +18,7 @@ public class AsyncExampleMapper : IAsyncMapper<ExampleA, ExampleB>
         
         if(destination == null)
         {
-            return await MapAsync(source);
+            return await MapAsync(source, cancellationToken);
         }
 
         destination.Name = source.Name;
@@ -29,12 +29,12 @@ public class AsyncExampleMapper : IAsyncMapper<ExampleA, ExampleB>
 
 public class AsyncExampleWithContextMapper : IAsyncMapper<ExampleA, ExampleB, ExampleContext>
 {
-    public Task<ExampleB?> MapAsync(ExampleA? source)
+    public Task<ExampleB?> MapAsync(ExampleA? source, CancellationToken cancellationToken = default)
     {
-        return MapAsync(source, new ExampleB());
+        return MapAsync(source, new ExampleB(), cancellationToken);
     }
 
-    public async Task<ExampleB?> MapAsync(ExampleA? source, ExampleB? destination)
+    public async Task<ExampleB?> MapAsync(ExampleA? source, ExampleB? destination, CancellationToken cancellationToken = default)
     {
         if(source == null)
         {
@@ -43,7 +43,7 @@ public class AsyncExampleWithContextMapper : IAsyncMapper<ExampleA, ExampleB, Ex
         
         if(destination == null)
         {
-            return await MapAsync(source);
+            return await MapAsync(source, cancellationToken);
         }
         
         destination.Name = source.Name;

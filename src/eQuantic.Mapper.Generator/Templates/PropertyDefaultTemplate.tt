@@ -32,7 +32,7 @@
                 }
             }
         }
-        else if (srcType.IsNumeric() || srcType.IsBoolean())
+        else if (srcType.IsNumeric() || srcType.IsBoolean() || srcType.Is<Guid>() || srcType.Is<DateTime>())
         {
             if (verifyNullability)
             {

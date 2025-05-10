@@ -17,6 +17,8 @@ public class ExampleB : ExampleBase
     
     public string? Text { get; set; }
     public bool Boolean { get; set; }
+    public Guid Guid { get; set; }
+    public DateTime DateTime { get; set; }
     public ExampleEnumA EnumA { get; set; }
     public ExampleEnumA? NullableEnumA { get; set; }
     public ExampleEnumB Enum { get; set; }
