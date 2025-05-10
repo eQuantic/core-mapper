@@ -64,6 +64,13 @@ public static class SymbolExtensions
         return symbol.IsNullable() ? "?" : string.Empty;
     }
 
+    public static string GetName(this ITypeSymbol symbol)
+    {
+        var fullName = TryFullName(symbol);
+        var names = fullName?.Split('.');
+        return names?.Count(n => n == symbol.Name) > 1 ? fullName! : symbol.Name;
+    }
+    
     public static string? FullName(this INamedTypeSymbol? symbol)
     {
         if (symbol == null)

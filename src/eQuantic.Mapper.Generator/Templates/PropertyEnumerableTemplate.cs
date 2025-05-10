@@ -187,14 +187,14 @@ namespace eQuantic.Mapper.Generator.Templates
             this.Write("            {\n                var mapper = _mapperFactory.GetMapper<");
             
             #line 52 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(srcType!.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(srcType.GetName()));
             
             #line default
             #line hidden
             this.Write(", ");
             
             #line 52 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(destType!.Name));
+            this.Write(this.ToStringHelper.ToStringWithCulture(destType.GetName()));
             
             #line default
             #line hidden

@@ -49,7 +49,7 @@
             }
 #>
             {
-                var mapper = _mapperFactory.GetMapper<<#=srcType!.Name#>, <#=destType!.Name#>>();
+                var mapper = _mapperFactory.GetMapper<<#=srcType.GetName()#>, <#=destType.GetName()#>>();
                 if (mapper != null)
                 {
                     destination.<#=destProperty.Name#> = source.<#=srcProperty.Name#>.Select(o => mapper.Map(o)!)<#=GetCastMethod(destProperty)#>;
