@@ -18,7 +18,7 @@ namespace eQuantic.Mapper.Generator.Templates
     /// Class to produce the template output
     /// </summary>
     
-    #line 1 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+    #line 1 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
     [global::System.CodeDom.Compiler.GeneratedCodeAttribute("Microsoft.VisualStudio.TextTemplating", "16.0.0.0")]
     internal partial class PropertyEnumerableTemplate : PropertyEnumerableTemplateBase
     {
@@ -29,7 +29,7 @@ namespace eQuantic.Mapper.Generator.Templates
         public virtual string TransformText()
         {
             
-            #line 5 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 5 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
     var srcType = srcProperty.Type.GetFirstTypeArgument();
     var destType = destProperty.Type.GetFirstTypeArgument();
@@ -48,34 +48,34 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            if (source.");
             
-            #line 18 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 18 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write(" != null)\r\n                destination.");
+            this.Write(" != null)\n                destination.");
             
-            #line 19 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 19 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 19 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 19 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             
-            #line 19 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 19 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetCastMethod(srcProperty, destProperty)));
             
             #line default
             #line hidden
-            this.Write(";\r\n");
+            this.Write(";\n");
             
-            #line 20 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 20 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
                 }
                 else
@@ -86,27 +86,27 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 25 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 25 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 25 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 25 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             
-            #line 25 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 25 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetCastMethod(srcProperty, destProperty)));
             
             #line default
             #line hidden
-            this.Write(" ?? [];\r\n");
+            this.Write(" ?? [];\n");
             
-            #line 26 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 26 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
                 }
             }
@@ -118,27 +118,27 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            destination.");
             
-            #line 32 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 32 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 32 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 32 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             
-            #line 32 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 32 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetCastMethod(srcProperty, destProperty)));
             
             #line default
             #line hidden
-            this.Write(";\r\n");
+            this.Write(";\n");
             
-            #line 33 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 33 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             }
         }
@@ -152,14 +152,14 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            if (source.");
             
-            #line 41 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 41 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write("?.Length > 0)\r\n");
+            this.Write("?.Length > 0)\n");
             
-            #line 42 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 42 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             }
             else
@@ -170,37 +170,37 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("            if (source.");
             
-            #line 47 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 47 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write("?.Any() == true)\r\n");
+            this.Write("?.Any() == true)\n");
             
-            #line 48 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 48 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             }
 
             
             #line default
             #line hidden
-            this.Write("            {\r\n                var mapper = MapperFactory?.GetAnyMapper<");
+            this.Write("            {\n                var mapper = MapperFactory?.GetAnyMapper<");
             
-            #line 52 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(srcType!.Name));
+            #line 52 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(srcType.GetName()));
             
             #line default
             #line hidden
             this.Write(", ");
             
-            #line 52 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
-            this.Write(this.ToStringHelper.ToStringWithCulture(destType!.Name));
+            #line 52 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
+            this.Write(this.ToStringHelper.ToStringWithCulture(destType.GetName()));
             
             #line default
             #line hidden
-            this.Write(">();\r\n                if (mapper != null)\r\n                {\r\n");
+            this.Write(">();\n                if (mapper != null)\n                {\n");
             
-            #line 55 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 55 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             if (asynchronous)
             {
@@ -211,83 +211,83 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("                    var listOf");
             
-            #line 60 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 60 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = new List<");
             
-            #line 60 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 60 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destElementType));
             
             #line default
             #line hidden
-            this.Write(">();\r\n                    foreach(var srcItemOf");
+            this.Write(">();\n                    foreach(var srcItemOf");
             
-            #line 61 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 61 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(" in source.");
             
-            #line 61 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 61 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write(")\r\n                    {\r\n                        var mappedItemOf");
+            this.Write(")\n                    {\n                        var mappedItemOf");
             
-            #line 63 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 63 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = await mapper.MapAsync(srcItemOf");
             
-            #line 63 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 63 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
-            this.Write(", cancellationToken);\r\n                        listOf");
+            this.Write(", cancellationToken);\n                        listOf");
             
-            #line 64 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 64 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(".Add(mappedItemOf");
             
-            #line 64 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 64 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
-            this.Write("!);\r\n                    }\r\n                    destination.");
+            this.Write("!);\n                    }\n                    destination.");
             
-            #line 66 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 66 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = listOf");
             
-            #line 66 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 66 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             
-            #line 66 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 66 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetCastMethod(destProperty)));
             
             #line default
             #line hidden
-            this.Write(";\r\n");
+            this.Write(";\n");
             
-            #line 67 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 67 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             }
             else
@@ -298,37 +298,37 @@ namespace eQuantic.Mapper.Generator.Templates
             #line hidden
             this.Write("                    destination.");
             
-            #line 72 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 72 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(destProperty.Name));
             
             #line default
             #line hidden
             this.Write(" = source.");
             
-            #line 72 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 72 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(srcProperty.Name));
             
             #line default
             #line hidden
             this.Write(".Select(o => mapper.Map(o)!)");
             
-            #line 72 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 72 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
             this.Write(this.ToStringHelper.ToStringWithCulture(GetCastMethod(destProperty)));
             
             #line default
             #line hidden
-            this.Write(";\r\n");
+            this.Write(";\n");
             
-            #line 73 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 73 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
             }
 
             
             #line default
             #line hidden
-            this.Write("                }\r\n            }\r\n");
+            this.Write("                }\n            }\n");
             
-            #line 78 "C:\projects\equantic\github\core-mapper\src\eQuantic.Mapper.Generator\Templates\PropertyEnumerableTemplate.tt"
+            #line 78 "/Users/edgarmesquita/projects/github/equantic/core-mapper/src/eQuantic.Mapper.Generator/Templates/PropertyEnumerableTemplate.tt"
 
         }
     }
