@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>1.6.1.0</Version>
-        <FileVersion>1.6.1.0</FileVersion>
-        <AssemblyVersion>1.6.1.0</AssemblyVersion>
+        <Version>1.6.2.0</Version>
+        <FileVersion>1.6.2.0</FileVersion>
+        <AssemblyVersion>1.6.2.0</AssemblyVersion>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         

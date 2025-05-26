@@ -6,6 +6,8 @@ namespace eQuantic.Mapper.Generator.Templates;
 
 internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
 {
+    private static readonly HashSet<string> ProcessedTypes = [];
+    
     private string WritePropertySet(IList<IPropertySymbol> srcProperties, IPropertySymbol destProperty)
     {
         var mapFrom = destProperty
@@ -44,9 +46,9 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
 
         foreach (var template in templates)
         {
-            if (!template.Accepted()) 
+            if (!template.Accepted())
                 continue;
-            
+
             var code = template.TransformText();
             if (!string.IsNullOrEmpty(code))
                 return code;
@@ -54,11 +56,11 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
 
         return string.Empty;
     }
-    
+
     private static List<IPropertySymbol> GetProperties(ITypeSymbol? sourceClass)
     {
         if (sourceClass == null) return [];
-        
+
         var list = GetProperties(sourceClass.BaseType);
         list.AddRange(sourceClass.ReadWriteScalarProperties());
         return list;
@@ -71,7 +73,7 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
             return $"{classFullNamespace}.{namedTypeSymbol.Name}";
         return namedTypeSymbol.Name;
     }
-    
+
     private HashSet<string> GetNamespaces()
     {
         var namespaces = new HashSet<string>
@@ -83,7 +85,7 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         };
         if(asynchronous)
             namespaces.Add("System.Threading.Tasks");
-        
+
         var srcClassFullNamespace = mapperInfo.SourceClass.FullNamespace();
         if (!string.IsNullOrEmpty(srcClassFullNamespace))
         {
@@ -96,6 +98,9 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
             namespaces.Add(destClassFullNamespace!);
         }
 
+        // Clear processed types for each mapper generation
+        ProcessedTypes.Clear();
+        
         var srcProperties = GetPropertiesNamespaces(mapperInfo.SourceClass);
         foreach (var srcPropertyNamespace in srcProperties)
         {
@@ -112,10 +117,23 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
 
         return namespaces;
     }
-    
+
     private static IEnumerable<string> GetPropertiesNamespaces(ITypeSymbol classType)
     {
         var namespaces = new HashSet<string>();
+        var typeFullName = classType.TryFullName();
+        
+        // Prevent circular references by checking if we've already processed this type
+        if (typeFullName != null && ProcessedTypes.Contains(typeFullName))
+        {
+            return namespaces;
+        }
+        
+        if (typeFullName != null)
+        {
+            ProcessedTypes.Add(typeFullName);
+        }
+        
         var list = classType.ReadWriteScalarProperties();
         foreach (var symbol in list)
         {
@@ -130,10 +148,15 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
                     if(!string.IsNullOrEmpty(nmSpace))
                         namespaces.Add(nmSpace!);
 
-                    var propertyNamespaces = GetPropertiesNamespaces(ts);
-                    foreach (var propertyNamespace in propertyNamespaces)
+                    // Only recurse if we haven't processed this type yet
+                    var tsFullName = ts.TryFullName();
+                    if (tsFullName != null && !ProcessedTypes.Contains(tsFullName))
                     {
-                        namespaces.Add(propertyNamespace);
+                        var propertyNamespaces = GetPropertiesNamespaces(ts);
+                        foreach (var propertyNamespace in propertyNamespaces)
+                        {
+                            namespaces.Add(propertyNamespace);
+                        }
                     }
                 }
             }
@@ -141,10 +164,10 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
             var fullNamespace = symbol.Type.FullNamespace();
             if(string.IsNullOrEmpty(fullNamespace))
                 continue;
-            
+
             namespaces.Add(fullNamespace!);
         }
 
         return namespaces;
     }
-}
+} 

@@ -119,25 +119,38 @@ namespace MyCode
 {
     public partial class ExampleMapper : IMapper<ExampleA, ExampleB>
     {
+		#nullable enable
+		/// <summary>
+		/// The event before map
+		/// </summary>
+		public event OnMapHandler<ExampleA, ExampleB>? OnBeforeMap;
+
+		/// <summary>
+		/// The event after map
+		/// </summary>
+		public event OnMapHandler<ExampleA, ExampleB>? OnAfterMap;
+		
         /// <summary>
 		/// The mapper factory
 		/// </summary>
-        private readonly IMapperFactory _mapperFactory;
+        protected readonly IMapperFactory? MapperFactory;
+		#nullable disable
 
-        public ExampleMapper(IMapperFactory mapperFactory)
+		public ExampleMapper(IMapperFactory mapperFactory)
 		{
-			_mapperFactory = mapperFactory;
+			MapperFactory = mapperFactory;
+			AfterConstructor();
 		}
-
+        
 		#nullable enable
-		public ExampleB? Map(ExampleA? source)
+		public virtual ExampleB? Map(ExampleA? source)
 		{
 			return Map(source, new ExampleB());
 		}
 		#nullable disable
 
 		#nullable enable
-		public ExampleB? Map(ExampleA? source, ExampleB? destination)
+		public virtual ExampleB? Map(ExampleA? source, ExampleB? destination)
 		{
 			if (source == null)
 			{
@@ -148,7 +161,7 @@ namespace MyCode
 			{
 				return Map(source);
 			}
-			BeforeMap(source, destination);
+			InvokeHandler(OnBeforeMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
 
             destination.Name = source.Name;
             destination.NullableStringToDate = !string.IsNullOrEmpty(source.NullableStringToDate) ? DateTime.Parse(source.NullableStringToDate) : null;
@@ -158,7 +171,7 @@ namespace MyCode
             destination.NullableToNonNullableInteger = source.NullableToNonNullableInteger ?? 0;
             if (source.Models?.Any() == true)
             {
-                var mapper = _mapperFactory.GetMapper<ExampleModelA, ExampleModelB>();
+                var mapper = MapperFactory?.GetAnyMapper<ExampleModelA, ExampleModelB>();
                 if (mapper != null)
                 {
                     destination.Models = source.Models.Select(o => mapper.Map(o)!);
@@ -166,29 +179,36 @@ namespace MyCode
             }
             if (source.Model != null)
             {
-                var mapper = _mapperFactory.GetMapper<ExampleModelA, ExampleModelB>();
+                var mapper = MapperFactory?.GetAnyMapper<ExampleModelA, ExampleModelB>();
                 if (mapper != null)
                 {
-                    destination.Model = mapper.Map(source.Model);
+                    var mappedModel = mapper.Map(source.Model);
+                    destination.Model = mappedModel!;
                 }
-            }            destination.Enum1 = (ExampleEnumB)(int)source.Enum1;
+            }
+            destination.Enum1 = (ExampleEnumB)(int)source.Enum1;
             destination.Enum2 = (ExampleEnumB)source.Enum2;
             destination.Enum3 = (Int32)source.Enum3;
             destination.IntegerList = source.IntegerList;
             destination.GuidList = source.GuidList;
-
-			AfterMap(source, destination);
+			InvokeHandler(OnAfterMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
 
 			return destination;
 		}
 		#nullable disable
 
-		#nullable enable
-		partial void BeforeMap(ExampleA? source, ExampleB? destination);
-		#nullable disable
+		partial void AfterConstructor();
 
 		#nullable enable
-		partial void AfterMap(ExampleA? source, ExampleB? destination);
+		private void InvokeHandler(OnMapHandler<ExampleA, ExampleB>? handler, MapEventArgs<ExampleA, ExampleB> eventArgs)
+	    {
+			if (handler == null)
+	        {
+	            return;
+	        }
+
+			handler(this, eventArgs);
+		}
 		#nullable disable
     }
 }";
@@ -197,9 +217,9 @@ namespace MyCode
         Assert.Multiple(() =>
         {
             Assert.That(diagnostics.IsEmpty, Is.True);
-            Assert.That(outputCompilation.SyntaxTrees.Count(), Is.EqualTo(3));
+            Assert.That(outputCompilation.SyntaxTrees.Count(), Is.EqualTo(2));
             Assert.That(runResult, Is.Not.Null);
-            Assert.That(runResult.GeneratedTrees, Has.Length.EqualTo(2));
+            Assert.That(runResult.GeneratedTrees, Has.Length.EqualTo(1));
             Assert.That(runResult.Diagnostics.IsEmpty, Is.True);
             Assert.That(runResult.Results[0].Generator, Is.EqualTo(generator));
             Assert.That(actualCode, Is.EqualTo(expectedCode.Replace("\r", "")));

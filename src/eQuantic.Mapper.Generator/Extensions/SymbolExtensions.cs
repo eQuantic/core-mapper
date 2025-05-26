@@ -1,4 +1,5 @@
 using System.Collections;
+using System.Collections.Immutable;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using Microsoft.CodeAnalysis;
@@ -9,6 +10,7 @@ namespace eQuantic.Mapper.Generator.Extensions;
 public static class SymbolExtensions
 {
     private const int DocLines = 3;
+    
     public static string? FullMetadataName(this ISymbol? symbol)
     {
         if (symbol == null)
@@ -70,7 +72,7 @@ public static class SymbolExtensions
         var names = fullName?.Split('.');
         return names?.Count(n => n == symbol.Name) > 1 ? fullName! : symbol.Name;
     }
-    
+
     public static string? FullName(this INamedTypeSymbol? symbol)
     {
         if (symbol == null)
@@ -92,64 +94,59 @@ public static class SymbolExtensions
 
         return symbol.Name + suffix + symbol.NullableToken();
     }
-    
+
     public static string? FullName(this IMethodSymbol? symbol)
     {
         if (symbol == null)
         {
             return null;
         }
-        
-        var suffix = "";
-        if (symbol.Arity > 0)
+
+        var prefix = FullNamespace(symbol);
+
+        if (prefix != "")
         {
-            suffix = CollectTypeArguments(symbol.TypeArguments);
+            return prefix + "." + symbol.Name;
         }
 
-        return symbol.Name + suffix;
+        return symbol.Name;
     }
 
-    private static string CollectTypeArguments(IReadOnlyList<ITypeSymbol> typeArguments)
+    private static string CollectTypeArguments(ImmutableArray<ITypeSymbol> typeArguments)
     {
-        var output = new List<string>();
-        foreach (var t in typeArguments)
+        var sb = new StringBuilder();
+        sb.Append('<');
+        for (var i = 0; i < typeArguments.Length; i++)
         {
-            switch (t)
-            {
-                case INamedTypeSymbol nts:
-                    output.Add(FullName(nts)!);
-                    break;
-                case ITypeParameterSymbol tps:
-                    output.Add(tps.Name + tps.NullableToken());
-                    break;
-                default:
-                    throw new NotSupportedException(
-                        $"Cannot generate type name from type argument {t.GetType().FullName}");
-            }
+            if (i > 0)
+                sb.Append(", ");
+            sb.Append(typeArguments[i].TryFullName());
         }
-
-
-        return "<" + string.Join(", ", output) + ">";
+        sb.Append('>');
+        return sb.ToString();
     }
 
     public static string? FullNamespace(this ISymbol? symbol)
     {
-        if (symbol == null)
+        if (symbol?.ContainingNamespace == null)
         {
             return null;
         }
-        
-        var parts = new Stack<string>();
-        var iterator = (symbol as INamespaceSymbol) ?? symbol.ContainingNamespace;
-        while (iterator != null)
-        {
-            if (!string.IsNullOrEmpty(iterator.Name))
-            {
-                parts.Push(iterator.Name);
-            }
 
+        var parts = new List<string>();
+        var iterator = symbol.ContainingNamespace;
+        while (iterator != null && !iterator.IsGlobalNamespace)
+        {
+            parts.Add(iterator.Name);
             iterator = iterator.ContainingNamespace;
         }
+
+        if (parts.Count == 0)
+        {
+            return null;
+        }
+
+        parts.Reverse();
 
         return string.Join(".", parts);
     }
@@ -162,22 +159,33 @@ public static class SymbolExtensions
     public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol? symbol)
     {
         return symbol?.GetMembers().OfType<IPropertySymbol>()
-            .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
+            .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ??
+            Array.Empty<IPropertySymbol>();
     }
 
     public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this ITypeSymbol? symbol)
     {
-        return symbol?.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanRead() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
+        return symbol?.GetMembers().OfType<IPropertySymbol>()
+            .Where(p => p.CanRead() && !p.HasParameters() && !p.IsNotMapped()) ?? 
+            Array.Empty<IPropertySymbol>();
     }
 
     public static IEnumerable<IPropertySymbol> WritableScalarProperties(this ITypeSymbol? symbol)
     {
-        return symbol?.GetMembers().OfType<IPropertySymbol>().Where(p => p.CanWrite() && !p.HasParameters()) ?? Array.Empty<IPropertySymbol>();
+        return symbol?.GetMembers().OfType<IPropertySymbol>()
+            .Where(p => p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ?? 
+            Array.Empty<IPropertySymbol>();
     }
 
     public static bool CanRead(this IPropertySymbol? symbol) => symbol?.GetMethod != null;
     public static bool CanWrite(this IPropertySymbol? symbol) => symbol?.SetMethod != null;
     public static bool HasParameters(this IPropertySymbol? symbol) => symbol?.Parameters.Any() == true;
+    
+    public static bool IsNotMapped(this IPropertySymbol? symbol)
+    {
+        return symbol?.GetAttributes()
+            .Any(attr => attr.AttributeClass?.FullName() == "eQuantic.Mapper.Attributes.NotMappedAttribute") == true;
+    }
 
     public static IEnumerable<AttributeData> GetAttributes<TAttribute>(this ISymbol? symbol)
     {
@@ -199,8 +207,8 @@ public static class SymbolExtensions
 
     public static string? TypeConstraintString(this IMethodSymbol? symbol)
     {
-        return symbol?.IsGenericMethod != true ? 
-            null : 
+        return symbol?.IsGenericMethod != true ?
+            null :
             string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
     }
 
@@ -210,7 +218,7 @@ public static class SymbolExtensions
         {
             return null;
         }
-        
+
         var factors = new List<string>();
         if (symbol.HasValueTypeConstraint)
         {
@@ -227,10 +235,6 @@ public static class SymbolExtensions
         else if (symbol.HasUnmanagedTypeConstraint)
         {
             factors.Add("unmanaged");
-        }
-        else
-        {
-            // No factors to add
         }
 
         if (symbol.HasConstructorConstraint)
@@ -253,37 +257,37 @@ public static class SymbolExtensions
         var expectedType = typeof(T);
         return type.TryFullName() == expectedType.FullName;
     }
-    
+
     public static bool IsString(this ITypeSymbol? type)
     {
         if (type == null)
         {
             return false;
         }
-        
+
         return type.SpecialType == SpecialType.System_String;
     }
-    
+
     public static bool IsEnum(this ITypeSymbol? type)
     {
         if (type == null)
         {
             return false;
         }
-        
+
         return type.TypeKind == TypeKind.Enum || (type.IsNullable() && type.GetFirstTypeArgument()?.TypeKind == TypeKind.Enum);
     }
-    
+
     public static bool IsArray(this ITypeSymbol? type)
     {
         return type is IArrayTypeSymbol || type?.SpecialType == SpecialType.System_Array;
     }
-    
+
     public static bool IsEnumerable(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(IEnumerable<>));
     public static bool IsCollection(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(ICollection<>));
     public static bool IsList(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(List<>));
     public static bool IsHashSet(this ISymbol? type) => type.IsOriginalDefinitionFrom(typeof(HashSet<>));
-    
+
     public static bool IsTypeOf(this ISymbol? type, Type typeOf)
     {
         if (type == null)
@@ -293,7 +297,7 @@ public static class SymbolExtensions
 
         return type.ToString() == typeOf.FullName;
     }
-    
+
     public static bool IsOriginalDefinitionFrom(this ISymbol? type, Type definitionType)
     {
         if (type == null)
@@ -303,14 +307,14 @@ public static class SymbolExtensions
 
         return type.OriginalDefinition.ToString() == definitionType.CSharpName(true);
     }
-    
+
     public static bool IsAnyEnumerable(this ITypeSymbol? type)
     {
         if (type == null)
         {
             return false;
         }
-        
+
         return type.IsArray() || type.IsEnumerable() || type.IsCollection() || type.IsList() || type.IsHashSet();
     }
 
@@ -323,14 +327,14 @@ public static class SymbolExtensions
 
         return type.SpecialType == SpecialType.System_Boolean;
     }
-    
+
     public static bool IsPrimitive(this ITypeSymbol? type)
     {
         if (type == null)
         {
             return false;
         }
-        
+
         return type.IsNumeric() || type.SpecialType switch
         {
             SpecialType.System_Boolean => true,
@@ -347,7 +351,7 @@ public static class SymbolExtensions
         {
             return false;
         }
-        
+
         return type.SpecialType switch
         {
             SpecialType.System_SByte => true,
@@ -373,16 +377,16 @@ public static class SymbolExtensions
 
         if (type.IsNumeric())
             return "0";
-        
+
         if (type.IsBoolean())
             return "false";
 
         if (type.Is<Guid>())
             return "Guid.Empty";
-        
+
         if (type.Is<DateTime>())
             return "new DateTime()";
-        
+
         return "default";
     }
 
@@ -390,11 +394,11 @@ public static class SymbolExtensions
     {
         return !IsNullable(type) ? null : type!.GetFirstTypeArgument();
     }
-    
+
     public static bool IsNullable(this ITypeSymbol? type)
     {
-        return type is 
-            { IsValueType: false, NullableAnnotation: NullableAnnotation.Annotated } or 
+        return type is
+            { IsValueType: false, NullableAnnotation: NullableAnnotation.Annotated } or
             INamedTypeSymbol { Name: nameof(Nullable), TypeArguments.Length: > 0 };
     }
 
@@ -407,12 +411,12 @@ public static class SymbolExtensions
             _ => null
         };
     }
-    
+
     public static string CSharpName(this Type type, bool fullName = false)
     {
         var sb = new StringBuilder();
         var name = fullName ? type.FullName! : type.Name;
-        if (!type.IsGenericType) 
+        if (!type.IsGenericType)
             return name;
         sb.Append(name.Substring(0, name.IndexOf('`')));
         sb.Append("<");
@@ -421,4 +425,4 @@ public static class SymbolExtensions
         sb.Append(">");
         return sb.ToString();
     }
-}
+} 

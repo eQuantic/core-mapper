@@ -8,48 +8,54 @@ public static class ServiceCollectionExtensions
 {
     public static IServiceCollection AddMappers(this IServiceCollection services)
     {
-        return services.AddMappers(_ => {});
+        return services.AddMappers(_ => { });
     }
-    
+
     public static IServiceCollection AddMappers(this IServiceCollection services, Action<MapperOptions>? options)
     {
         var mapperOptions = new MapperOptions();
         options?.Invoke(mapperOptions);
-        
+
         var types = mapperOptions.GetAssemblies()
             .SelectMany(o => o.GetTypes())
-            .Where(o => o is { IsAbstract: false, IsInterface: false } && o.GetInterfaces().Any(i => i == typeof(IMapper)));
+            .Where(o => o != typeof(MapperWrapper<,>) && o != typeof(MapperWrapper<,,>) &&
+                        o is { IsAbstract: false, IsInterface: false } &&
+                        o.GetInterfaces().Any(i => i == typeof(IMapper)));
         foreach (var type in types)
         {
             AddMapper(type, typeof(IMapper<,>), typeof(IMapper<,,>), services);
             AddMapper(type, typeof(IAsyncMapper<,>), typeof(IAsyncMapper<,,>), services);
         }
+
         services.TryAddTransient(typeof(IMapperFactory), typeof(MapperFactory));
 
         return services;
     }
 
-    private static void AddMapper(Type concreteType, Type interfaceType, Type interfaceWithContextType, IServiceCollection services)
+    private static void AddMapper(Type concreteType, Type interfaceType, Type interfaceWithContextType,
+        IServiceCollection services)
     {
         var interfaces = concreteType.GetInterfaces();
         var mapperInterface = interfaces
             .FirstOrDefault(o => o.GenericTypeArguments.Length > 0 && o.GetGenericTypeDefinition() == interfaceType);
-            
-        if(mapperInterface == null)
+
+        if (mapperInterface == null)
         {
             return;
         }
 
         var sourceType = mapperInterface.GenericTypeArguments[0];
         var destinationType = mapperInterface.GenericTypeArguments[1];
-            
+
         var mapperWithContextInterface = interfaces
-            .FirstOrDefault(o => o.GenericTypeArguments.Length > 0 && o.GetGenericTypeDefinition() == interfaceWithContextType);
+            .FirstOrDefault(o =>
+                o.GenericTypeArguments.Length > 0 && o.GetGenericTypeDefinition() == interfaceWithContextType);
 
         if (mapperWithContextInterface != null)
         {
             var contextType = mapperWithContextInterface.GenericTypeArguments[2];
-            services.AddTransient(interfaceWithContextType.MakeGenericType(sourceType, destinationType, contextType), concreteType);
+            services.AddTransient(interfaceWithContextType.MakeGenericType(sourceType, destinationType, contextType),
+                concreteType);
         }
         else
         {
