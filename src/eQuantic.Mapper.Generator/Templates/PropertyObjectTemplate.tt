@@ -1,9 +1,10 @@
 <#@ template language="C#" visibility="internal" #>
 <#@ import namespace="System.Text" #>
 <#@ import namespace="System.Collections.Generic" #>
+<#@ import namespace="eQuantic.Mapper.Generator.Extensions" #>
             if (source.<#= srcProperty.Name #> != null)
             {
-                var mapper = MapperFactory?.GetAnyMapper<<#= srcProperty.Type.Name #>, <#= destProperty.Type.Name #>>();
+                var mapper = MapperFactory?.GetAnyMapper<<#= srcProperty.Type.GetName() #>, <#= destProperty.Type.GetName() #>>();
                 if (mapper != null)
                 {
                     var mapped<#= destProperty.Name #> = <#= asynchronous ? "await ": "" #>mapper.Map<#= asynchronous ? "Async": "" #>(source.<#=srcProperty.Name #><#= asynchronous ? ", cancellationToken": "" #>);
