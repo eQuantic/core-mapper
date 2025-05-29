@@ -1,5 +1,8 @@
 namespace eQuantic.Mapper;
 
+/// <summary>
+/// Base marker interface for all asynchronous mappers.
+/// </summary>
 public interface IAsyncMapper : IMapper
 {
 }

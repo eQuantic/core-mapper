@@ -4,11 +4,25 @@ using eQuantic.Mapper.Generator.Extensions;
 
 namespace eQuantic.Mapper.Generator;
 
+/// <summary>
+/// Syntax receiver that collects mapper class declarations during compilation.
+/// </summary>
 internal class SyntaxReceiver : ISyntaxContextReceiver
 {
+    /// <summary>
+    /// Gets the log of processing messages.
+    /// </summary>
     public List<string> Log { get; } = new();
+    
+    /// <summary>
+    /// Gets the collected mapper information.
+    /// </summary>
     public List<MapperInfo> Infos { get; } = new();
 
+    /// <summary>
+    /// Visits syntax nodes to identify mapper classes.
+    /// </summary>
+    /// <param name="context">The generator syntax context.</param>
     public void OnVisitSyntaxNode(GeneratorSyntaxContext context)
     {
         try

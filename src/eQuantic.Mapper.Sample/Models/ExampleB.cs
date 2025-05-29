@@ -35,6 +35,7 @@ public class ExampleB : ExampleBase
     public SubExampleB SubExample { get; set; } = new();
     
     public SubExampleA SubExampleA { get; set; } = new();
+    public SameNameExample.SameNameExample2 SameNameExample { get; set; } = new();
 }
 
 public class SubExampleB

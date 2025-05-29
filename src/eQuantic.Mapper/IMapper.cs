@@ -1,5 +1,8 @@
 namespace eQuantic.Mapper;
 
+/// <summary>
+/// Base marker interface for all mappers.
+/// </summary>
 public interface IMapper
 {
     

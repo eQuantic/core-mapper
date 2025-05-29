@@ -28,4 +28,6 @@ public class ExampleA
     public SubExampleA SubExample { get; set; } = new();
     
     public SubExampleA SubExampleA { get; set; } = new();
+    
+    public SameNameExample.SameNameExample SameNameExample { get; set; } = new();
 }

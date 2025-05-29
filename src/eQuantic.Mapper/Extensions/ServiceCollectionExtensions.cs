@@ -4,13 +4,27 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
+/// <summary>
+/// Extension methods for IServiceCollection to register mappers.
+/// </summary>
 public static class ServiceCollectionExtensions
 {
+    /// <summary>
+    /// Adds mapper services to the specified IServiceCollection.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <returns>The IServiceCollection so that additional calls can be chained.</returns>
     public static IServiceCollection AddMappers(this IServiceCollection services)
     {
         return services.AddMappers(_ => { });
     }
 
+    /// <summary>
+    /// Adds mapper services to the specified IServiceCollection with configuration options.
+    /// </summary>
+    /// <param name="services">The IServiceCollection to add services to.</param>
+    /// <param name="options">The configuration options for the mappers.</param>
+    /// <returns>The IServiceCollection so that additional calls can be chained.</returns>
     public static IServiceCollection AddMappers(this IServiceCollection services, Action<MapperOptions>? options)
     {
         var mapperOptions = new MapperOptions();
@@ -32,6 +46,13 @@ public static class ServiceCollectionExtensions
         return services;
     }
 
+    /// <summary>
+    /// Adds a mapper to the service collection based on the concrete type and interface types.
+    /// </summary>
+    /// <param name="concreteType">The concrete mapper type.</param>
+    /// <param name="interfaceType">The mapper interface type.</param>
+    /// <param name="interfaceWithContextType">The mapper interface type with context.</param>
+    /// <param name="services">The service collection.</param>
     private static void AddMapper(Type concreteType, Type interfaceType, Type interfaceWithContextType,
         IServiceCollection services)
     {

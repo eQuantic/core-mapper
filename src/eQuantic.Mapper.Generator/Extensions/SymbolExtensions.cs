@@ -6,6 +6,9 @@ using Microsoft.CodeAnalysis;
 
 namespace eQuantic.Mapper.Generator.Extensions;
 
+/// <summary>
+/// Extension methods for working with Roslyn symbols.
+/// </summary>
 [ExcludeFromCodeCoverage]
 public static class SymbolExtensions
 {
