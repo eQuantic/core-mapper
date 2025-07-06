@@ -109,8 +109,13 @@ namespace <#= mapperInfo.MapperClass.FullNamespace()! #>
 <#
     foreach (var destProperty in destProperties)
     {
+        var propertyCode = WritePropertySet(srcProperties, destProperty);
+        if (!string.IsNullOrEmpty(propertyCode))
+        {
 #>
-<#= WritePropertySet(srcProperties, destProperty) #><#
+<#= propertyCode #>
+<#
+        }
     }
 
     if (asynchronous)

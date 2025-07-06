@@ -1,203 +1,358 @@
-# eQuantic.Mapper Library
+# 🎯 eQuantic.Mapper
 
-The **eQuantic Mapper** provides all the implementation needed to use the **Mapper Pattern**
+[![NuGet Version](https://img.shields.io/nuget/v/eQuantic.Mapper.svg)](https://www.nuget.org/packages/eQuantic.Mapper/)
+[![NuGet Downloads](https://img.shields.io/nuget/dt/eQuantic.Mapper.svg)](https://www.nuget.org/packages/eQuantic.Mapper/)
+[![License](https://img.shields.io/github/license/eQuantic/core-mapper.svg)](https://github.com/eQuantic/core-mapper/blob/master/LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/eQuantic/core-mapper/build.yml?branch=master)](https://github.com/eQuantic/core-mapper/actions)
+[![codecov](https://codecov.io/gh/eQuantic/core-mapper/branch/master/graph/badge.svg)](https://codecov.io/gh/eQuantic/core-mapper)
 
-To install **eQuantic.Mapper**, run the following command in the [Package Manager Console](https://docs.nuget.org/docs/start-here/using-the-package-manager-console)
-```dos
-Install-Package eQuantic.Mapper
+> **High-performance object mapping library for .NET with source generation and advanced aggregation features.**
+
+The **eQuantic Mapper** is a powerful, compile-time object mapping library that eliminates reflection overhead by generating mapping code at build time. It supports complex property mappings, aggregations, and custom transformations with excellent performance characteristics.
+
+## 🚀 Features
+
+- ✨ **Zero Reflection** - All mappings are generated at compile time
+- 🔄 **Source Generation** - Uses Roslyn analyzers for code generation
+- 📊 **Property Aggregation** - Combine multiple source properties into single destination properties
+- 🎯 **Type Safety** - Full compile-time type checking
+- 🔧 **Customizable** - Easy to extend and customize mapping behavior
+- 📝 **Rich Attributes** - Declarative mapping configuration
+- ⚡ **High Performance** - Minimal allocation and maximum speed
+- 🧩 **Dependency Injection** - Built-in DI container support
+
+## 📦 Installation
+
+Install the main package:
+
+```bash
+dotnet add package eQuantic.Mapper
 ```
-If you choose to use generated mappers, install the Generator package below
-```dos
+
+For auto-generated mappers, also install the generator:
+
+```bash
+dotnet add package eQuantic.Mapper.Generator
+```
+
+Or via Package Manager Console:
+
+```powershell
+Install-Package eQuantic.Mapper
 Install-Package eQuantic.Mapper.Generator
 ```
 
-## Example of implementation
+## 🎯 Quick Start
 
-### The models
-```csharp
-public class ExampleA
-{
-    public string Id { get; set; } = string.Empty;
-    public string Name { get; set; } = string.Empty;
-    public string Date { get; set; } = string.Empty;
-}
-
-public class ExampleB
-{
-    public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public DateTime Date { get; set; }
-    
-    [MapFrom(typeof(ExampleA), nameof(ExampleA.Id))]
-    public string Code { get; set; } = string.Empty;
-}
-```
-
-### The mapper
-```csharp
-public class ExampleMapper : IMapper<ExampleA, ExampleB>
-{
-    public ExampleB? Map(ExampleA? source)
-    {
-        return Map(source, new ExampleB());
-    }
-
-    public ExampleB? Map(ExampleA? source, ExampleB? destination)
-    {
-        if (source == null)
-        {
-            return null;
-        }
-
-        if (destination == null)
-        {
-            return Map(source);
-        }
-        
-        destination.Id = source.Id;
-        destination.Name = source.Name;
-        destination.Date = source.Date;
-        
-        return destination;
-    }
-}
-```
-
-### The mapper with context
+### Basic Usage
 
 ```csharp
-public class ExampleContext
+// Source model
+public class UserSource
 {
-    public string Code { get; set; }
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public int Age { get; set; }
+    public decimal Salary { get; set; }
+    public decimal Bonus { get; set; }
 }
-```
 
-```csharp
-public class ExampleMapper : IMapper<ExampleA, ExampleB, ExampleContext>
+// Destination model with aggregation
+public class UserDestination
 {
-    public ExampleContext Context { get; set; }
-    
-    public ExampleB? Map(ExampleA? source)
-    {
-        return Map(source, new ExampleB());
-    }
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) }, 
+             MapperPropertyAggregation.ConcatenateWithSpace)]
+    public string FullName { get; set; } = string.Empty;
 
-    public ExampleB? Map(ExampleA? source, ExampleB? destination)
-    {
-        if (source == null)
-        {
-            return null;
-        }
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.Salary), nameof(UserSource.Bonus) }, 
+             MapperPropertyAggregation.Sum)]
+    public decimal TotalIncome { get; set; }
 
-        if (destination == null)
-        {
-            return Map(source);
-        }
-        
-        destination.Id = source.Id;
-        destination.Name = source.Name;
-        destination.Date = source.Date;
-        
-        if(!string.IsNullOrEmpty(Context.Code))
-        {
-            destination.Code = Context.Code;
-        }
-        return destination;
-    }
+    public int Age { get; set; } // Auto-mapped by name
 }
-```
 
-### Auto-Generated Code
-
-If you want that the mapper to be auto-generated, you need to use the `MapperAttribute` and `partial` definition into the class mapper
-
-```csharp
-[Mapper(typeof(ExampleA), typeof(ExampleB))]
-public partial class ExampleMapper : IMapper
+// Auto-generated mapper
+[Mapper(typeof(UserSource), typeof(UserDestination))]
+public partial class UserMapper : IMapper
 {
 }
 ```
 
-or
-
-```csharp
-[Mapper(typeof(ExampleA), typeof(ExampleB))]
-public partial class AsyncExampleMapper : IAsyncMapper
-{
-}
-```
-
-### The application
+### Dependency Injection Setup
 
 ```csharp
 var builder = WebApplication.CreateBuilder(args);
+
+// Register all mappers
 builder.Services.AddMappers();
+
 var app = builder.Build();
 
-app.MapGet("/", (IMapperFactory mapperFactory) =>
+app.MapGet("/users/{id}", async (int id, IMapperFactory mapperFactory) =>
 {
-    var mapper = mapperFactory.GetMapper<ExampleA, ExampleB>()!;
-    var exampleA = new ExampleA
-    {
-        Id = "1",
-        Name = "Test",
-        Date = "2023-01-01"
-    };
-    var exampleB = mapper.Map(exampleA);
-    return exampleB;
+    var mapper = mapperFactory.GetMapper<UserSource, UserDestination>()!;
+    var user = await GetUserAsync(id); // Your data access logic
+    return mapper.Map(user);
 });
 
 app.Run();
 ```
 
-### Manual customization
+## 🔧 Advanced Features
 
-If you need customize the auto-generated mapper, just create delegations for `OnBeforeMap` or/and `OnAfterMap` events:
+### Property Aggregation
+
+The `MapFromAttribute` supports multiple aggregation types for combining source properties:
+
+#### Available Aggregation Types
+
+| Aggregation | Description | Example |
+|------------|-------------|---------|
+| `None` | No aggregation (default) | Simple property mapping |
+| `Concatenate` | Join without separator | "JohnDoe" |
+| `ConcatenateWithSpace` | Join with space | "John Doe" |
+| `ConcatenateWithComma` | Join with comma | "John, Doe" |
+| `ConcatenateWithSeparator` | Join with custom separator | "John-Doe" |
+| `Sum` | Numeric sum | 5000 + 1000 = 6000 |
+| `Max` | Maximum value | Max(5000, 1000) = 5000 |
+| `Min` | Minimum value | Min(5000, 1000) = 1000 |
+| `Average` | Average value | (5000 + 1000) / 2 = 3000 |
+| `FirstNonEmpty` | First non-null/empty value | "John" |
+| `LastNonEmpty` | Last non-null/empty value | "Doe" |
+| `Count` | Count of non-null values | 2 |
+
+### Complex Aggregation Examples
 
 ```csharp
-[Mapper(typeof(ExampleA), typeof(ExampleB))]
-public partial class ExampleMapper : IMapper
+public class PersonSource
+{
+    public string FirstName { get; set; } = string.Empty;
+    public string MiddleName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Department { get; set; } = string.Empty;
+    public string Position { get; set; } = string.Empty;
+    public decimal Salary { get; set; }
+    public decimal Bonus { get; set; }
+    public decimal Commission { get; set; }
+    public int WorkHours { get; set; }
+    public int OvertimeHours { get; set; }
+}
+
+public class PersonDestination
+{
+    // String concatenation with space
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName) }, 
+             MapperPropertyAggregation.ConcatenateWithSpace)]
+    public string FullName { get; set; } = string.Empty;
+
+    // Custom separator concatenation
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.Department), nameof(PersonSource.Position) }, 
+             MapperPropertyAggregation.ConcatenateWithSeparator, " - ")]
+    public string JobTitle { get; set; } = string.Empty;
+
+    // Numeric aggregation - Sum
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) }, 
+             MapperPropertyAggregation.Sum)]
+    public decimal TotalIncome { get; set; }
+
+    // Numeric aggregation - Average
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) }, 
+             MapperPropertyAggregation.Average)]
+    public decimal AverageIncome { get; set; }
+
+    // Get maximum value
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus) }, 
+             MapperPropertyAggregation.Max)]
+    public decimal HighestPayComponent { get; set; }
+
+    // Count non-null fields
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.Department), nameof(PersonSource.Position) }, 
+             MapperPropertyAggregation.Count)]
+    public int NonNullFieldsCount { get; set; }
+
+    // First non-empty value
+    [MapFrom(typeof(PersonSource), 
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName), nameof(PersonSource.MiddleName) }, 
+             MapperPropertyAggregation.FirstNonEmpty)]
+    public string? PreferredName { get; set; }
+}
+
+// Generated mapper
+[Mapper(typeof(PersonSource), typeof(PersonDestination))]
+public partial class PersonAggregationMapper : IMapper
+{
+}
+```
+
+### Async Mapping Support
+
+```csharp
+[Mapper(typeof(UserSource), typeof(UserDestination))]
+public partial class AsyncUserMapper : IAsyncMapper
+{
+}
+
+// Usage
+var mapper = mapperFactory.GetAsyncMapper<UserSource, UserDestination>()!;
+var result = await mapper.MapAsync(source, cancellationToken);
+```
+
+### Context-Aware Mapping
+
+```csharp
+public class MappingContext
+{
+    public string TenantId { get; set; } = string.Empty;
+    public bool IncludeSensitiveData { get; set; }
+}
+
+[Mapper(typeof(UserSource), typeof(UserDestination), typeof(MappingContext))]
+public partial class ContextUserMapper : IMapper<UserSource, UserDestination, MappingContext>
 {
     partial void AfterConstructor()
     {
-        OnAfterMap += (s, e) => 
+        OnAfterMap += (sender, args) =>
         {
-            if(e.Source.Name == "Test")
+            if (!Context?.IncludeSensitiveData == true)
             {
-                e.Destination.Name = "Empty";
+                args.Destination.Salary = 0;
             }
         };
     }
 }
 ```
 
-If you need to modify the generated constructor, just set `OmitConstructor` on attribute and create the new one:
+### Custom Mapping Logic
 
 ```csharp
-[Mapper(typeof(ExampleA), typeof(ExampleB), OmitConstructor = true)]
-public partial class ExampleMapper : IMapper
+[Mapper(typeof(UserSource), typeof(UserDestination))]
+public partial class CustomUserMapper : IMapper
 {
-    public ExampleMapper(IMapperFactory mapperFactory)
+    partial void AfterConstructor()
     {
-        MapperFactory = mapperFactory;
-        
-        OnAfterMap += (s, e) => 
+        OnBeforeMap += (sender, args) =>
         {
-            if(e.Source.Name == "Test")
+            // Pre-processing logic
+            Console.WriteLine($"Mapping user: {args.Source.FirstName}");
+        };
+
+        OnAfterMap += (sender, args) =>
+        {
+            // Post-processing logic
+            if (args.Destination.Age < 18)
             {
-                e.Destination.Name = "Empty";
+                args.Destination.FullName = $"Minor: {args.Destination.FullName}";
             }
         };
     }
 }
 ```
 
-## Debugging
+### Custom Constructor
 
-Inside `MapperGenerator` on `Initialize` method use:
+```csharp
+[Mapper(typeof(UserSource), typeof(UserDestination), OmitConstructor = true)]
+public partial class CustomConstructorMapper : IMapper
+{
+    private readonly ILogger<CustomConstructorMapper> _logger;
+
+    public CustomConstructorMapper(IMapperFactory mapperFactory, ILogger<CustomConstructorMapper> logger)
+    {
+        MapperFactory = mapperFactory;
+        _logger = logger;
+        
+        OnAfterMap += (sender, args) =>
+        {
+            _logger.LogInformation("Mapped user: {FullName}", args.Destination.FullName);
+        };
+    }
+}
+```
+
+## 🔍 Generated Code Example
+
+For the aggregation example above, the generator produces optimized code like:
+
+```csharp
+public virtual PersonDestination? Map(PersonSource? source, PersonDestination? destination)
+{
+    if (source == null) return null;
+    if (destination == null) return Map(source);
+    
+    InvokeHandler(OnBeforeMap, new MapEventArgs<PersonSource, PersonDestination>(source, destination));
+
+    destination.FullName = string.Join(" ", new object?[] { source.FirstName, source.LastName }
+        .Where(x => x != null && !string.IsNullOrEmpty(x.ToString()))
+        .Select(x => x.ToString()));
+        
+    destination.JobTitle = string.Join(" - ", new object?[] { source.Department, source.Position }
+        .Where(x => x != null && !string.IsNullOrEmpty(x.ToString()))
+        .Select(x => x.ToString()));
+        
+    destination.TotalIncome = new[] { source.Salary, source.Bonus, source.Commission }.Sum();
+    destination.AverageIncome = new[] { source.Salary, source.Bonus, source.Commission }.Average();
+    destination.HighestPayComponent = new[] { source.Salary, source.Bonus }.Max();
+    destination.NonNullFieldsCount = new object?[] { source.FirstName, source.Department, source.Position }.Count(x => x != null);
+    destination.PreferredName = new object?[] { source.FirstName, source.LastName, source.MiddleName }
+        .Where(x => x != null && !string.IsNullOrEmpty(x.ToString()))
+        .FirstOrDefault()?.ToString();
+
+    InvokeHandler(OnAfterMap, new MapEventArgs<PersonSource, PersonDestination>(source, destination));
+    return destination;
+}
+```
+
+## 📋 Backward Compatibility
+
+The library maintains full backward compatibility. Existing single-property mappings continue to work:
+
+```csharp
+public class LegacyDestination
+{
+    [MapFrom(typeof(UserSource), nameof(UserSource.FirstName))]  // Still works!
+    public string Name { get; set; } = string.Empty;
+}
+```
+
+## 🛠️ Development & Debugging
+
+For debugging the source generator during development:
 
 ```csharp
 #if DEBUG
     SpinWait.SpinUntil(() => Debugger.IsAttached);
 #endif 
 ```
+
+## 📊 Performance
+
+eQuantic.Mapper generates highly optimized code with:
+- **Zero reflection** - All mapping logic is compile-time generated
+- **Minimal allocations** - Efficient object creation and property assignment
+- **Type safety** - Full compile-time type checking
+- **Inlining-friendly** - Code structure optimized for JIT inlining
+
+## 🤝 Contributing
+
+Contributions are welcome! Please feel free to submit a Pull Request. For major changes, please open an issue first to discuss what you would like to change.
+
+## 📄 License
+
+This project is licensed under the Apache License 2.0 - see the [LICENSE](LICENSE) file for details.
+
+## 🔗 Links
+
+- [NuGet Package - Core](https://www.nuget.org/packages/eQuantic.Mapper/)
+- [NuGet Package - Generator](https://www.nuget.org/packages/eQuantic.Mapper.Generator/)
+- [GitHub Repository](https://github.com/eQuantic/core-mapper)
+- [Issues & Support](https://github.com/eQuantic/core-mapper/issues)
+
+---
+
+⭐ **If you find this library useful, please give it a star!** ⭐

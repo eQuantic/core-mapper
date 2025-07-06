@@ -25,6 +25,7 @@
 
     <ItemGroup>
       <ProjectReference Include="..\..\src\eQuantic.Mapper\eQuantic.Mapper.csproj" />
+      <ProjectReference Include="..\..\src\eQuantic.Mapper.Generator\eQuantic.Mapper.Generator.csproj" OutputItemType="Analyzer" ReferenceOutputAssembly="false" />
     </ItemGroup>
 
     <ItemGroup>

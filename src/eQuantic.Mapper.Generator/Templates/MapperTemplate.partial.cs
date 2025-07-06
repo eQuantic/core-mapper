@@ -14,12 +14,19 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
             .GetAttributes()
             .FirstOrDefault(o => o.AttributeClass?.FullName() == "eQuantic.Mapper.Attributes.MapFromAttribute");
         var mapFromSrcClass = (INamedTypeSymbol?)mapFrom?.ConstructorArguments[0].Value;
-        var mapFromSrcPropName = (string?)mapFrom?.ConstructorArguments[1].Value;
+        var mapFromSrcPropNames = GetPropertyNamesFromAttribute(mapFrom);
 
         if (mapFromSrcClass != null && mapFromSrcClass.FullName() == mapperInfo.SourceClass.FullName())
         {
+            // Handle multiple properties with aggregation
+            if (mapFromSrcPropNames.Length > 1 && mapFrom != null)
+            {
+                return WriteAggregatedPropertySet(srcProperties, destProperty, mapFrom);
+            }
+            
+            // Handle single property mapping
             var mapFromSrcProperty = srcProperties.FirstOrDefault(o =>
-                o.Name.Equals(mapFromSrcPropName, StringComparison.InvariantCultureIgnoreCase));
+                mapFromSrcPropNames.Contains(o.Name, StringComparer.InvariantCultureIgnoreCase));
 
             if (mapFromSrcProperty != null)
             {
@@ -55,6 +62,92 @@ internal partial class MapperTemplate(MapperInfo mapperInfo, bool asynchronous)
         }
 
         return string.Empty;
+    }
+
+    private string WriteAggregatedPropertySet(IList<IPropertySymbol> srcProperties, IPropertySymbol destProperty, AttributeData mapFromAttribute)
+    {
+        var mapFromSrcPropNames = GetPropertyNamesFromAttribute(mapFromAttribute);
+        var aggregationValue = mapFromAttribute.ConstructorArguments.Length > 2 ? 
+            (int)mapFromAttribute.ConstructorArguments[2].Value! : 0; // 0 = None
+        var separator = mapFromAttribute.ConstructorArguments.Length > 3 ? 
+            (string?)mapFromAttribute.ConstructorArguments[3].Value : null;
+
+        var matchedProperties = srcProperties
+            .Where(p => mapFromSrcPropNames.Contains(p.Name, StringComparer.InvariantCultureIgnoreCase))
+            .ToList();
+
+        if (!matchedProperties.Any())
+            return string.Empty;
+
+        // Generate aggregation code directly
+        return GenerateAggregationCode(matchedProperties, destProperty, aggregationValue, separator);
+    }
+
+    private static string[] GetPropertyNamesFromAttribute(AttributeData? mapFromAttribute)
+    {
+        if (mapFromAttribute == null || mapFromAttribute.ConstructorArguments.Length < 2)
+            return Array.Empty<string>();
+
+        var secondArg = mapFromAttribute.ConstructorArguments[1];
+        
+        // Check if it's an array (new syntax)
+        if (!secondArg.IsNull && secondArg.Kind == TypedConstantKind.Array)
+        {
+            return secondArg.Values.Select(v => v.Value?.ToString()).Where(v => v != null).ToArray()!;
+        }
+        
+        // Check if it's a single string (old syntax for backward compatibility)
+        if (!secondArg.IsNull && secondArg.Value is string singleProperty)
+        {
+            return new[] { singleProperty };
+        }
+
+        return Array.Empty<string>();
+    }
+
+    private string GenerateAggregationCode(List<IPropertySymbol> matchedProperties, IPropertySymbol destProperty, int aggregationValue, string? separator)
+    {
+        var propertyAccess = string.Join(", ", matchedProperties.Select(p => $"source.{p.Name}"));
+        var nullabilityCheck = mapperInfo.VerifyNullability && 
+                               (destProperty.Type.CanBeReferencedByName || destProperty.NullableAnnotation == NullableAnnotation.Annotated);
+
+        var code = aggregationValue switch
+        {
+            1 => $@"            destination.{destProperty.Name} = string.Join("""", new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).Select(x => x.ToString()));
+", // Concatenate
+            2 => $@"            destination.{destProperty.Name} = string.Join("" "", new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).Select(x => x.ToString()));
+", // ConcatenateWithSpace
+            3 => $@"            destination.{destProperty.Name} = string.Join("", "", new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).Select(x => x.ToString()));
+", // ConcatenateWithComma
+            4 => $@"            destination.{destProperty.Name} = string.Join(""{separator ?? ""}"", new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).Select(x => x.ToString()));
+", // ConcatenateWithSeparator
+            5 => $@"            destination.{destProperty.Name} = new[] {{ {propertyAccess} }}.Sum();
+", // Sum
+            6 => $@"            destination.{destProperty.Name} = new[] {{ {propertyAccess} }}.Max();
+", // Max
+            7 => $@"            destination.{destProperty.Name} = new[] {{ {propertyAccess} }}.Min();
+", // Min
+            8 => $@"            destination.{destProperty.Name} = new[] {{ {propertyAccess} }}.Average();
+", // Average
+            9 => $@"            destination.{destProperty.Name} = new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).FirstOrDefault()?.ToString();
+", // FirstNonEmpty
+            10 => $@"            destination.{destProperty.Name} = new object?[] {{ {propertyAccess} }}.Where(x => x != null && !string.IsNullOrEmpty(x.ToString())).LastOrDefault()?.ToString();
+", // LastNonEmpty
+            11 => $@"            destination.{destProperty.Name} = new object?[] {{ {propertyAccess} }}.Count(x => x != null);
+", // Count
+            _ => string.Empty
+        };
+
+        if (nullabilityCheck && !string.IsNullOrEmpty(code))
+        {
+            return $@"            if (source != null)
+            {{
+{code.TrimEnd()}
+            }}
+";
+        }
+        
+        return code;
     }
 
     private static List<IPropertySymbol> GetProperties(ITypeSymbol? sourceClass)
