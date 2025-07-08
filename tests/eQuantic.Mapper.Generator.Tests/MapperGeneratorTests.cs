@@ -117,51 +117,69 @@ using MyCode.Models;
 
 namespace MyCode
 {
+    /// <summary>
+    /// Mapper implementation for converting ExampleA to ExampleB
+    /// </summary>
     public partial class ExampleMapper : IMapper<ExampleA, ExampleB>
     {
-		#nullable enable
-		/// <summary>
-		/// The event before map
-		/// </summary>
-		public event OnMapHandler<ExampleA, ExampleB>? OnBeforeMap;
-
-		/// <summary>
-		/// The event after map
-		/// </summary>
-		public event OnMapHandler<ExampleA, ExampleB>? OnAfterMap;
-		
+        #nullable enable
         /// <summary>
-		/// The mapper factory
-		/// </summary>
+        /// The event before map
+        /// </summary>
+        public event OnMapHandler<ExampleA, ExampleB>? OnBeforeMap;
+
+        /// <summary>
+        /// The event after map
+        /// </summary>
+        public event OnMapHandler<ExampleA, ExampleB>? OnAfterMap;
+
+        /// <summary>
+        /// The mapper factory
+        /// </summary>
         protected readonly IMapperFactory? MapperFactory;
-		#nullable disable
+        #nullable disable
 
-		public ExampleMapper(IMapperFactory mapperFactory)
-		{
-			MapperFactory = mapperFactory;
-			AfterConstructor();
-		}
-        
-		#nullable enable
-		public virtual ExampleB? Map(ExampleA? source)
-		{
-			return Map(source, new ExampleB());
-		}
-		#nullable disable
+        /// <summary>
+        /// Initializes a new instance of the ExampleMapper class
+        /// </summary>
+        /// <param name=""mapperFactory"">The mapper factory for creating nested mappers</param>
+        public ExampleMapper(IMapperFactory mapperFactory)
+        {
+            MapperFactory = mapperFactory;
+            AfterConstructor();
+        }
 
-		#nullable enable
-		public virtual ExampleB? Map(ExampleA? source, ExampleB? destination)
-		{
-			if (source == null)
-			{
-				return null;
-			}
+        #nullable enable
+        /// <summary>
+        /// Maps a ExampleA to a new ExampleB
+        /// </summary>
+        /// <param name=""source"">The source object to map from</param>
+        /// <returns>A new ExampleB with mapped values</returns>
+        public virtual ExampleB? Map(ExampleA? source)
+        {
+            return Map(source, new ExampleB());
+        }
+        #nullable disable
 
-			if (destination == null)
-			{
-				return Map(source);
-			}
-			InvokeHandler(OnBeforeMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
+        #nullable enable
+        /// <summary>
+        /// Maps a ExampleA to an existing ExampleB
+        /// </summary>
+        /// <param name=""source"">The source object to map from</param>
+        /// <param name=""destination"">The destination object to map to</param>
+        /// <returns>The updated destination object</returns>
+        public virtual ExampleB? Map(ExampleA? source, ExampleB? destination)
+        {
+            if (source == null)
+            {
+                return null;
+            }
+
+            if (destination == null)
+            {
+                return Map(source);
+            }
+            InvokeHandler(OnBeforeMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
 
             destination.Name = source.Name;
             destination.NullableStringToDate = !string.IsNullOrEmpty(source.NullableStringToDate) ? DateTime.Parse(source.NullableStringToDate) : null;
@@ -191,25 +209,29 @@ namespace MyCode
             destination.Enum3 = (Int32)source.Enum3;
             destination.IntegerList = source.IntegerList;
             destination.GuidList = source.GuidList;
-			InvokeHandler(OnAfterMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
+            InvokeHandler(OnAfterMap, new MapEventArgs<ExampleA, ExampleB>(source, destination));
 
-			return destination;
-		}
-		#nullable disable
+            return destination;
+        }
+        #nullable disable
 
-		partial void AfterConstructor();
+        /// <summary>
+        /// Called after the constructor completes to allow custom
+        /// initialization
+        /// </summary>
+        partial void AfterConstructor();
 
-		#nullable enable
-		private void InvokeHandler(OnMapHandler<ExampleA, ExampleB>? handler, MapEventArgs<ExampleA, ExampleB> eventArgs)
-	    {
-			if (handler == null)
-	        {
-	            return;
-	        }
+        #nullable enable
+        private void InvokeHandler(OnMapHandler<ExampleA, ExampleB>? handler, MapEventArgs<ExampleA, ExampleB> eventArgs)
+        {
+            if (handler == null)
+            {
+                return;
+            }
 
-			handler(this, eventArgs);
-		}
-		#nullable disable
+            handler(this, eventArgs);
+        }
+        #nullable disable
     }
 }";
         var runResult = driver.GetRunResult();

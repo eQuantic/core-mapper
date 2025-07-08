@@ -4,6 +4,22 @@ using System.Text;
 namespace eQuantic.Mapper.Generator;
 
 /// <summary>
+/// Represents the type of indentation to use in code generation.
+/// </summary>
+public enum IndentationType
+{
+    /// <summary>
+    /// Use tab characters for indentation.
+    /// </summary>
+    Tabs,
+    
+    /// <summary>
+    /// Use 4 spaces for each indentation level.
+    /// </summary>
+    Spaces
+}
+
+/// <summary>
 /// Utility class for writing formatted code with proper indentation.
 /// </summary>
 [ExcludeFromCodeCoverage]
@@ -18,21 +34,39 @@ internal class CodeWriter
     /// Initializes a new instance of the CodeWriter class.
     /// </summary>
     /// <param name="indentLevel">The initial indentation level.</param>
-    public CodeWriter(int indentLevel = 0)
+    /// <param name="indentationType">The type of indentation to use (tabs or spaces).</param>
+    public CodeWriter(int indentLevel = 0, IndentationType indentationType = IndentationType.Spaces)
     {
         IndentLevel = indentLevel;
+        IndentationType = indentationType;
         InternalScopeTracker = new ScopeTracker(this); //We only need one. It can be reused.
     }
 
     /// <summary>
     /// Gets or sets the current indentation level.
     /// </summary>
-    private int IndentLevel { get; set; }
+    public int IndentLevel { get; set; }
+    
+    /// <summary>
+    /// Gets the type of indentation being used.
+    /// </summary>
+    public IndentationType IndentationType { get; private set; }
     
     /// <summary>
     /// Gets the internal scope tracker for managing code blocks.
     /// </summary>
     private ScopeTracker InternalScopeTracker { get; } //We only need one. It can be reused.
+    
+    /// <summary>
+    /// Gets the indentation string for the current level.
+    /// </summary>
+    private string GetIndentation()
+    {
+        var level = Math.Max(0, IndentLevel); // Protect against negative values
+        return IndentationType == IndentationType.Spaces 
+            ? new string(' ', level * 4) 
+            : new string('\t', level);
+    }
     
     /// <summary>
     /// Appends text to the current line without adding a new line.
@@ -54,7 +88,7 @@ internal class CodeWriter
 #if NET7_0_OR_GREATER 
 [StringSyntax(StringSyntaxAttribute.CompositeFormat)] 
 #endif 
-        string line, params object[] args) => Content.Append(new string('\t', IndentLevel)).AppendLine(args?.Length > 0 ? string.Format(line, args) : line);
+        string line, params object[] args) => Content.Append(GetIndentation()).AppendLine(args?.Length > 0 ? string.Format(line, args) : line);
     
     /// <summary>
     /// Appends an empty line.
@@ -62,14 +96,82 @@ internal class CodeWriter
     public void AppendLine() => Content.AppendLine();
 
     /// <summary>
-    /// Appends XML documentation summary.
+    /// Appends XML documentation summary with automatic line wrapping.
     /// </summary>
     /// <param name="summary">The summary text.</param>
-    public void AppendSummary(string summary)
+    /// <param name="maxLineLength">Maximum characters per line before wrapping (default: 80).</param>
+    public void AppendXmlDocSummary(string summary, int maxLineLength = 80)
     {
         AppendLine("/// <summary>");
-        AppendLine($"/// {summary}");
+        
+        // Calculate available space after "/// " prefix and current indentation
+        var indentLength = GetIndentation().Length;
+        const int prefixLength = 4; // "/// ".Length
+        var availableLength = maxLineLength - indentLength - prefixLength;
+        
+        // If summary fits in one line, use it as is
+        if (summary.Length <= availableLength)
+        {
+            AppendLine($"/// {summary}");
+        }
+        else
+        {
+            // Split summary into words and wrap lines
+            var words = summary.Split([' '], StringSplitOptions.RemoveEmptyEntries);
+            var currentLine = new StringBuilder();
+            
+            foreach (var word in words)
+            {
+                // Check if adding this word would exceed the line limit
+                var testLine = currentLine.Length == 0 ? word : $"{currentLine} {word}";
+                
+                if (testLine.Length <= availableLength)
+                {
+                    currentLine = new StringBuilder(testLine);
+                }
+                else
+                {
+                    // Output current line and start a new one
+                    if (currentLine.Length > 0)
+                    {
+                        AppendLine($"/// {currentLine}");
+                        currentLine = new StringBuilder(word);
+                    }
+                    else
+                    {
+                        // Single word is too long, output it anyway to avoid infinite loop
+                        AppendLine($"/// {word}");
+                    }
+                }
+            }
+            
+            // Output the last line if it has content
+            if (currentLine.Length > 0)
+            {
+                AppendLine($"/// {currentLine}");
+            }
+        }
+        
         AppendLine("/// </summary>");
+    }
+
+    /// <summary>
+    /// Appends XML documentation parameter.
+    /// </summary>
+    /// <param name="paramName">The parameter name.</param>
+    /// <param name="description">The parameter description.</param>
+    public void AppendXmlDocParam(string paramName, string description)
+    {
+        AppendLine($"/// <param name=\"{paramName}\">{description}</param>");
+    }
+
+    /// <summary>
+    /// Appends XML documentation returns.
+    /// </summary>
+    /// <param name="description">The return description.</param>
+    public void AppendXmlDocReturns(string description)
+    {
+        AppendLine($"/// <returns>{description}</returns>");
     }
     
     /// <summary>
@@ -94,7 +196,7 @@ internal class CodeWriter
     /// <returns>A disposable scope tracker.</returns>
     public IDisposable BeginScope()
     {
-        Content.Append(new string('\t', IndentLevel)).AppendLine("{");
+        Content.Append(GetIndentation()).AppendLine("{");
         IndentLevel += 1;
         return InternalScopeTracker;
     }
@@ -109,14 +211,23 @@ internal class CodeWriter
     /// </summary>
     public void EndScope()
     {
-        IndentLevel -= 1;
-        Content.Append(new string('\t', IndentLevel)).AppendLine("}");
+        IndentLevel = Math.Max(0, IndentLevel - 1); // Protect against negative values
+        Content.Append(GetIndentation()).AppendLine("}");
+    }
+
+    /// <summary>
+    /// Changes the indentation type.
+    /// </summary>
+    /// <param name="indentationType">The new indentation type.</param>
+    public void SetIndentationType(IndentationType indentationType)
+    {
+        IndentationType = indentationType;
     }
 
     /// <summary>
     /// Starts a new line with proper indentation.
     /// </summary>
-    public void StartLine() => Content.Append(new string('\t', IndentLevel));
+    public void StartLine() => Content.Append(GetIndentation());
     
     /// <summary>
     /// Returns the generated code as a string.

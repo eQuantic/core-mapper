@@ -367,6 +367,7 @@ public static class SymbolExtensions
             SpecialType.System_UInt64 => true,
             SpecialType.System_Single => true,
             SpecialType.System_Double => true,
+            SpecialType.System_Decimal => true,
             _ => false
         };
     }

@@ -1,9 +1,9 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <Version>1.8.0.0</Version>
-        <FileVersion>1.8.0.0</FileVersion>
-        <AssemblyVersion>1.8.0.0</AssemblyVersion>
+        <Version>1.9.0.0</Version>
+        <FileVersion>1.9.0.0</FileVersion>
+        <AssemblyVersion>1.9.0.0</AssemblyVersion>
         <AssemblyTitle>eQuantic.Mapper.Generator</AssemblyTitle>
         <AssemblyName>eQuantic.Mapper.Generator</AssemblyName>
         
@@ -59,30 +59,6 @@
         <None Include="Icon_list.png" Pack="true" PackagePath="Icon_list.png" />
         <None Include="../../LICENSE" Pack="true" PackagePath="" />
         <None Include="../../README.md" Pack="true" PackagePath="" />
-        <None Update="Templates\MapperTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>MapperTemplate.cs</LastGenOutput>
-        </None>
-        <None Update="Templates\PropertyStringToPrimitiveTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>PropertyStringToPrimitiveTemplate.cs</LastGenOutput>
-        </None>
-        <None Update="Templates\PropertyObjectTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>PropertyObjectTemplate.cs</LastGenOutput>
-        </None>
-        <None Update="Templates\PropertyEnumTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>PropertyEnumTemplate.cs</LastGenOutput>
-        </None>
-        <None Update="Templates\PropertyEnumerableTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>PropertyEnumerableTemplate.cs</LastGenOutput>
-        </None>
-        <None Update="Templates\PropertyDefaultTemplate.tt">
-          <Generator>TextTemplatingFilePreprocessor</Generator>
-          <LastGenOutput>PropertyDefaultTemplate.cs</LastGenOutput>
-        </None>
     </ItemGroup>
     
     <ItemGroup>
@@ -100,56 +76,6 @@
         </AssemblyAttribute>
     </ItemGroup>
 
-    <ItemGroup>
-      <Compile Update="Templates\MapperTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>MapperTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyDefaultTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>PropertyDefaultTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyStringToPrimitiveTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>PropertyStringToPrimitiveTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyObjectTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>PropertyObjectTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyEnumTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>PropertyEnumTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyEnumerableTemplate.cs">
-        <AutoGen>True</AutoGen>
-        <DesignTime>True</DesignTime>
-        <DependentUpon>PropertyEnumerableTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\MapperTemplate.partial.cs">
-        <DependentUpon>MapperTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyDefaultTemplate.partial.cs">
-        <DependentUpon>PropertyDefaultTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyEnumerableTemplate.partial.cs">
-        <DependentUpon>PropertyEnumerableTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyEnumTemplate.partial.cs">
-        <DependentUpon>PropertyEnumTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyObjectTemplate.partial.cs">
-        <DependentUpon>PropertyObjectTemplate.tt</DependentUpon>
-      </Compile>
-      <Compile Update="Templates\PropertyStringToPrimitiveTemplate.partial.cs">
-        <DependentUpon>PropertyStringToPrimitiveTemplate.tt</DependentUpon>
-      </Compile>
-    </ItemGroup>
     
     <Target Name="GetDependencyTargetPaths">
         <ItemGroup>

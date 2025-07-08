@@ -1,7 +1,6 @@
 using System.Text;
 using Microsoft.CodeAnalysis;
 using Microsoft.CodeAnalysis.Text;
-using eQuantic.Mapper.Generator.Templates;
 
 namespace eQuantic.Mapper.Generator;
 
@@ -48,8 +47,8 @@ public sealed class MapperGenerator : ISourceGenerator
         var asynchronous = mapperInfo.IsAsyncMode();
         var className = mapperInfo.MapperClass.Name;
         var fileName = $"{className}.g.cs";
-        var template = new MapperTemplate(mapperInfo, asynchronous);
+        var mapperWriter = new MapperWriter(mapperInfo, asynchronous);
         
-        context.AddSource(fileName, SourceText.From(template.TransformText(), new UTF8Encoding(false)));
+        context.AddSource(fileName, SourceText.From(mapperWriter.GenerateMapper(), new UTF8Encoding(false)));
     }
 }
