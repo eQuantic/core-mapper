@@ -6,8 +6,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddMappers();
 var app = builder.Build();
 
-// Run nested property example on startup
+// Run examples on startup
 NestedPropertyExample.RunExample();
+ConditionalMappingExample.RunExample();
 
 app.MapGet("/", (IMapperFactory mapperFactory) =>
 {

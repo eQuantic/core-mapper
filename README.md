@@ -16,7 +16,8 @@ The **eQuantic Mapper** is a powerful, compile-time object mapping library that 
 - 🔄 **Source Generation** - Uses Roslyn analyzers for code generation
 - 📊 **Property Aggregation** - Combine multiple source properties into single destination properties
 - 🔁 **Bidirectional Mapping** - Support for forward, reverse, and bidirectional mappings
-- 🎯 **Type Safety** - Full compile-time type checking
+- 🎯 **Conditional Mapping** - MapWhen attribute for condition-based property mapping
+- ✅ **Type Safety** - Full compile-time type checking
 - 🔧 **Customizable** - Easy to extend and customize mapping behavior
 - 📝 **Rich Attributes** - Declarative mapping configuration
 - ⚡ **High Performance** - Minimal allocation and maximum speed
@@ -344,6 +345,110 @@ public partial class CustomConstructorMapper : IMapper
     }
 }
 ```
+
+### Conditional Mapping
+
+The `MapWhenAttribute` allows properties to be mapped only when certain conditions are met, providing powerful conditional logic for data mapping scenarios:
+
+#### Basic Conditional Mapping
+
+```csharp
+public class UserSource
+{
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    public string Email { get; set; } = string.Empty;
+    public decimal Salary { get; set; }
+    public int Age { get; set; }
+    public bool IsEmailVisible { get; set; }
+    public bool HasPremiumAccount { get; set; }
+    public string SensitiveData { get; set; } = string.Empty;
+}
+
+public class UserDestination
+{
+    public string FirstName { get; set; } = string.Empty;
+    public string LastName { get; set; } = string.Empty;
+    
+    // Map email only if IsEmailVisible is true
+    [MapFrom(typeof(UserSource), nameof(UserSource.Email))]
+    [MapWhen(nameof(UserSource.IsEmailVisible))]
+    public string? PublicEmail { get; set; }
+    
+    // Map phone only if user has premium account
+    [MapFrom(typeof(UserSource), nameof(UserSource.PhoneNumber))]
+    [MapWhen(nameof(UserSource.HasPremiumAccount))]
+    public string? Phone { get; set; }
+    
+    // Map age only if adult
+    [MapFrom(typeof(UserSource), nameof(UserSource.Age))]
+    [MapWhen("source.Age >= 18", true)]
+    public int? DisplayAge { get; set; }
+}
+```
+
+#### Context-Aware Conditional Mapping
+
+For more complex conditional logic, use context-aware mapping with expressions:
+
+```csharp
+public class UserContext
+{
+    public bool IncludeSensitiveData { get; set; }
+    public bool ShowContactInfo { get; set; }
+    public string UserRole { get; set; } = "User";
+}
+
+public class UserDestination
+{
+    // Map salary only if context allows sensitive data
+    [MapFrom(typeof(UserSource), nameof(UserSource.Salary))]
+    [MapWhen("Context?.IncludeSensitiveData == true", true)]
+    public decimal? Salary { get; set; }
+    
+    // Map sensitive data only if context user is admin
+    [MapFrom(typeof(UserSource), nameof(UserSource.SensitiveData))]
+    [MapWhen("Context?.UserRole == \"Admin\"", true)]
+    public string? RestrictedInfo { get; set; }
+    
+    // Conditional aggregation - show full name only if contact info is allowed
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) }, 
+             MapperPropertyAggregation.ConcatenateWithSpace)]
+    [MapWhen("Context?.ShowContactInfo == true", true)]
+    public string? FullName { get; set; }
+}
+
+// Context-aware mapper
+[Mapper(typeof(UserSource), typeof(UserDestination), typeof(UserContext))]
+public partial class ConditionalUserMapper : IMapper
+{
+    partial void AfterConstructor()
+    {
+        OnBeforeMap += (sender, args) =>
+        {
+            // Example: Log when sensitive data is being accessed
+            if (Context?.IncludeSensitiveData == true)
+            {
+                Console.WriteLine($"Sensitive data access for user: {args.Source.Email}");
+            }
+        };
+    }
+}
+```
+
+#### Conditional Mapping Options
+
+| Condition Type | Syntax | Example | Description |
+|---------------|--------|---------|-------------|
+| **Property Name** | `[MapWhen("PropertyName")]` | `[MapWhen("IsActive")]` | Maps when boolean property is true |
+| **Expression** | `[MapWhen("expression", true)]` | `[MapWhen("source.Age >= 18", true)]` | Maps when C# expression evaluates to true |
+| **Context Expression** | `[MapWhen("Context?.Property == value", true)]` | `[MapWhen("Context?.UserRole == \"Admin\"", true)]` | Maps based on context conditions |
+
+**Key Features:**
+- **Smart Context Detection**: Context references are only generated for mappers that have a context type
+- **Compile-Time Safety**: Invalid expressions result in compilation errors
+- **Zero Runtime Cost**: All conditions are evaluated at compile time where possible
+- **Complex Expressions**: Support for property access, comparisons, and logical operators
 
 ## 🔍 Generated Code Example
 

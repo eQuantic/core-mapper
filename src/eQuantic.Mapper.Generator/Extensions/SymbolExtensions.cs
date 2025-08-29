@@ -13,7 +13,7 @@ namespace eQuantic.Mapper.Generator.Extensions;
 public static class SymbolExtensions
 {
     private const int DocLines = 3;
-    
+
     public static string? FullMetadataName(this ISymbol? symbol)
     {
         if (symbol == null)
@@ -125,6 +125,7 @@ public static class SymbolExtensions
                 sb.Append(", ");
             sb.Append(typeArguments[i].TryFullName());
         }
+
         sb.Append('>');
         return sb.ToString();
     }
@@ -162,28 +163,28 @@ public static class SymbolExtensions
     public static IEnumerable<IPropertySymbol> ReadWriteScalarProperties(this ITypeSymbol? symbol)
     {
         return symbol?.GetMembers().OfType<IPropertySymbol>()
-            .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ??
-            Array.Empty<IPropertySymbol>();
+                   .Where(p => p.CanRead() && p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ??
+               Array.Empty<IPropertySymbol>();
     }
 
     public static IEnumerable<IPropertySymbol> ReadableScalarProperties(this ITypeSymbol? symbol)
     {
         return symbol?.GetMembers().OfType<IPropertySymbol>()
-            .Where(p => p.CanRead() && !p.HasParameters() && !p.IsNotMapped()) ?? 
-            Array.Empty<IPropertySymbol>();
+                   .Where(p => p.CanRead() && !p.HasParameters() && !p.IsNotMapped()) ??
+               Array.Empty<IPropertySymbol>();
     }
 
     public static IEnumerable<IPropertySymbol> WritableScalarProperties(this ITypeSymbol? symbol)
     {
         return symbol?.GetMembers().OfType<IPropertySymbol>()
-            .Where(p => p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ?? 
-            Array.Empty<IPropertySymbol>();
+                   .Where(p => p.CanWrite() && !p.HasParameters() && !p.IsNotMapped()) ??
+               Array.Empty<IPropertySymbol>();
     }
 
     public static bool CanRead(this IPropertySymbol? symbol) => symbol?.GetMethod != null;
     public static bool CanWrite(this IPropertySymbol? symbol) => symbol?.SetMethod != null;
     public static bool HasParameters(this IPropertySymbol? symbol) => symbol?.Parameters.Any() == true;
-    
+
     public static bool IsNotMapped(this IPropertySymbol? symbol)
     {
         return symbol?.GetAttributes()
@@ -193,7 +194,8 @@ public static class SymbolExtensions
     public static IEnumerable<AttributeData> GetAttributes<TAttribute>(this ISymbol? symbol)
     {
         var fullName = typeof(TAttribute).FullName;
-        return symbol?.GetAttributes().Where(att => att.AttributeClass.FullName() == fullName) ?? Array.Empty<AttributeData>();
+        return symbol?.GetAttributes().Where(att => att.AttributeClass.FullName() == fullName) ??
+               Array.Empty<AttributeData>();
     }
 
     public static AttributeData? GetAttribute<TAttribute>(this ISymbol? symbol)
@@ -210,9 +212,9 @@ public static class SymbolExtensions
 
     public static string? TypeConstraintString(this IMethodSymbol? symbol)
     {
-        return symbol?.IsGenericMethod != true ?
-            null :
-            string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
+        return symbol?.IsGenericMethod != true
+            ? null
+            : string.Join("\r\n", symbol.TypeParameters.Select(TypeConstraintString).Where(tp => tp != null));
     }
 
     public static string? TypeConstraintString(this ITypeParameterSymbol? symbol)
@@ -278,7 +280,8 @@ public static class SymbolExtensions
             return false;
         }
 
-        return type.TypeKind == TypeKind.Enum || (type.IsNullable() && type.GetFirstTypeArgument()?.TypeKind == TypeKind.Enum);
+        return type.TypeKind == TypeKind.Enum ||
+               (type.IsNullable() && type.GetFirstTypeArgument()?.TypeKind == TypeKind.Enum);
     }
 
     public static bool IsArray(this ITypeSymbol? type)
@@ -346,6 +349,16 @@ public static class SymbolExtensions
             SpecialType.System_Object => true,
             _ => false
         };
+    }
+
+    public static bool IsNullableBoolean(this ITypeSymbol? type)
+    {
+        if (type is not INamedTypeSymbol
+            {
+                IsGenericType: true, OriginalDefinition.SpecialType: SpecialType.System_Nullable_T
+            } namedType) return false;
+        var underlyingType = namedType.TypeArguments[0];
+        return underlyingType.SpecialType == SpecialType.System_Boolean;
     }
 
     public static bool IsNumeric(this ITypeSymbol? type)
@@ -429,4 +442,4 @@ public static class SymbolExtensions
         sb.Append(">");
         return sb.ToString();
     }
-} 
+}

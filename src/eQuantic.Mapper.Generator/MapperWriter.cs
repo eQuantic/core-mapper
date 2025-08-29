@@ -362,8 +362,21 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
         var mapFrom = destProperty
             .GetAttributes()
             .FirstOrDefault(o => o.AttributeClass?.FullName() == "eQuantic.Mapper.Attributes.MapFromAttribute");
+        var mapWhen = destProperty
+            .GetAttributes()
+            .FirstOrDefault(o => o.AttributeClass?.FullName() == "eQuantic.Mapper.Attributes.MapWhenAttribute");
+        
         var mapFromSrcClass = (INamedTypeSymbol?)mapFrom?.ConstructorArguments[0].Value;
         var mapFromSrcPropNames = GetPropertyNamesFromAttribute(mapFrom);
+
+        // Check if we need conditional mapping
+        var condition = GetConditionFromMapWhen(mapWhen, srcProperties, descriptor);
+        var hasCondition = !string.IsNullOrEmpty(condition);
+        
+        if (hasCondition)
+        {
+            writer.BeginScope($"if ({condition})");
+        }
 
         if (mapFromSrcClass != null && mapFromSrcClass.FullName() == descriptor.SourceClass.FullName())
         {
@@ -371,6 +384,7 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
             if (mapFromSrcPropNames.Length > 1 && mapFrom != null)
             {
                 WriteAggregatedPropertySet(writer, descriptor, srcProperties, destProperty, mapFrom);
+                if (hasCondition) writer.EndScope();
                 return;
             }
 
@@ -383,6 +397,7 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
                 {
                     // Nested property (e.g., "Address.Number")
                     WriteNestedPropertySetWithPath(writer, descriptor, propName, destProperty);
+                    if (hasCondition) writer.EndScope();
                     return;
                 }
 
@@ -393,6 +408,7 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
                 if (mapFromSrcProperty != null)
                 {
                     WritePropertySet(writer, descriptor, mapFromSrcProperty, destProperty);
+                    if (hasCondition) writer.EndScope();
                     return;
                 }
             }
@@ -404,6 +420,11 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
         if (srcProperty != null)
         {
             WritePropertySet(writer, descriptor, srcProperty, destProperty);
+        }
+        
+        if (hasCondition)
+        {
+            writer.EndScope();
         }
     }
 
@@ -533,6 +554,71 @@ internal class MapperWriter(MapperInfo mapperInfo, bool asynchronous)
     }
 
     // Copy all the helper methods from MapperTemplate.partial.cs
+    private static string GetConditionFromMapWhen(AttributeData? mapWhenAttribute, IList<IPropertySymbol> srcProperties, MapperDescriptor descriptor)
+    {
+        if (mapWhenAttribute == null || mapWhenAttribute.ConstructorArguments.Length < 1)
+            return string.Empty;
+
+        var firstArg = mapWhenAttribute.ConstructorArguments[0];
+        if (firstArg.Value is not string condition)
+            return string.Empty;
+
+        // Check if it's an expression (second argument is true)
+        var isExpression = mapWhenAttribute.ConstructorArguments.Length > 1 && 
+                          mapWhenAttribute.ConstructorArguments[1].Value is true;
+
+        if (isExpression)
+        {
+            // Return the expression as-is, but check for Context references
+            // Examples: "Context?.IncludeSensitiveData == true", "source.Age >= 18"
+            
+            // If the expression contains Context but mapper doesn't have context, return empty (skip mapping)
+            if (condition.Contains("Context") && !descriptor.HasContext)
+            {
+                return string.Empty;
+            }
+            
+            return condition;
+        }
+        else
+        {
+            // It's a simple property name, check if it exists and build the condition
+            var property = srcProperties.FirstOrDefault(p => 
+                string.Equals(p.Name, condition, StringComparison.InvariantCultureIgnoreCase));
+            
+            if (property != null)
+            {
+                // For boolean properties, just check if true
+                if (property.Type.IsBoolean())
+                {
+                    return $"source.{property.Name} == true";
+                }
+                // For nullable booleans
+                else if (property.Type.IsNullableBoolean())
+                {
+                    return $"source.{property.Name} == true";
+                }
+                // For other types, check if not null/empty
+                else if (property.Type.IsString())
+                {
+                    return $"!string.IsNullOrEmpty(source.{property.Name})";
+                }
+                else
+                {
+                    return $"source.{property.Name} != null";
+                }
+            }
+            
+            // If property not found, try nested property path
+            if (condition.Contains('.'))
+            {
+                return $"{BuildNestedPropertyAccessor(condition)} == true";
+            }
+        }
+
+        return string.Empty;
+    }
+    
     private static string[] GetPropertyNamesFromAttribute(AttributeData? mapFromAttribute)
     {
         if (mapFromAttribute == null || mapFromAttribute.ConstructorArguments.Length < 2)
