@@ -15,6 +15,7 @@ The **eQuantic Mapper** is a powerful, compile-time object mapping library that 
 - ✨ **Zero Reflection** - All mappings are generated at compile time
 - 🔄 **Source Generation** - Uses Roslyn analyzers for code generation
 - 📊 **Property Aggregation** - Combine multiple source properties into single destination properties
+- 🔁 **Bidirectional Mapping** - Support for forward, reverse, and bidirectional mappings
 - 🎯 **Type Safety** - Full compile-time type checking
 - 🔧 **Customizable** - Easy to extend and customize mapping behavior
 - 📝 **Rich Attributes** - Declarative mapping configuration
@@ -249,6 +250,75 @@ public partial class CustomUserMapper : IMapper
             {
                 args.Destination.FullName = $"Minor: {args.Destination.FullName}";
             }
+        };
+    }
+}
+```
+
+### Bidirectional Mapping
+
+The library now supports bidirectional mapping through the `MapperDirection` enum, allowing you to generate mappers that work in both directions with a single class:
+
+```csharp
+// Forward mapping only (default)
+[Mapper(typeof(UserSource), typeof(UserDestination))]
+public partial class ForwardUserMapper : IMapper
+{
+    // Generates: IMapper<UserSource, UserDestination>
+}
+
+// Reverse mapping only
+[Mapper(typeof(UserSource), typeof(UserDestination), MapperDirection.Reverse)]
+public partial class ReverseUserMapper : IMapper
+{
+    // Generates: IMapper<UserDestination, UserSource>
+}
+
+// Bidirectional mapping - both directions in one class
+[Mapper(typeof(UserSource), typeof(UserDestination), MapperDirection.Bidirectional)]
+public partial class BidirectionalUserMapper : IMapper
+{
+    // Generates: IMapper<UserSource, UserDestination>, IMapper<UserDestination, UserSource>
+}
+
+// Usage with dependency injection
+var mapperFactory = serviceProvider.GetRequiredService<IMapperFactory>();
+
+// For bidirectional mapper
+var biMapper = mapperFactory.GetMapper<BidirectionalUserMapper>();
+
+// Forward mapping
+var destination = biMapper.Map(userSource);
+
+// Reverse mapping (same instance)
+var source = biMapper.Map(userDestination);
+```
+
+#### Direction Options
+
+| Direction | Description | Generated Interfaces |
+|-----------|-------------|---------------------|
+| `Forward` | Maps from source to destination (default) | `IMapper<TSource, TDestination>` |
+| `Reverse` | Maps from destination to source | `IMapper<TDestination, TSource>` |
+| `Bidirectional` | Maps in both directions | `IMapper<TSource, TDestination>` and `IMapper<TDestination, TSource>` |
+
+#### Bidirectional with Context
+
+```csharp
+[Mapper(typeof(UserSource), typeof(UserDestination), typeof(MappingContext), MapperDirection.Bidirectional)]
+public partial class BidirectionalContextMapper : IMapper
+{
+    partial void AfterConstructor()
+    {
+        // Events are available for both directions
+        OnBeforeForwardMap += (sender, args) =>
+        {
+            // Logic for forward mapping
+        };
+        
+        OnBeforeReverseMap += (sender, args) =>
+        {
+            // Logic for reverse mapping
         };
     }
 }

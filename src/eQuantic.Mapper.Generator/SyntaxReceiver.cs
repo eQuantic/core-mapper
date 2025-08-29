@@ -75,17 +75,24 @@ internal class SyntaxReceiver : ISyntaxContextReceiver
 
             var mapperContextArg = generatedAttr.GetNamedArgument("Context");
             var mapperContext = mapperContextArg != null ? (INamedTypeSymbol?)mapperContextArg :
-                thirdArg is not null and not bool ? (INamedTypeSymbol?)thirdArg : null;
+                thirdArg is not null and not bool and not uint ? (INamedTypeSymbol?)thirdArg : null;
 
+            var directionArg = generatedAttr.GetNamedArgument("Direction");
+            if (directionArg == null && thirdArg is uint)
+            {
+                directionArg = thirdArg;
+            }
+            var direction = directionArg is uint u ? u : 0;
+            
             var verifyNullabilityArg = generatedAttr.GetNamedArgument("VerifyNullability");
             var verifyNullability = verifyNullabilityArg is true ||
-                                    ((thirdArg is not bool && fourthArg is true) || thirdArg is true);
+                                    ((thirdArg is not bool and not uint && fourthArg is true) || thirdArg is true);
 
             var omitConstructorArg = generatedAttr.GetNamedArgument("OmitConstructor");
             var omitConstructor = omitConstructorArg is true ||
                                   (fifthArg is true || (thirdArg is bool && fourthArg is true));
 
-            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext, verifyNullability, omitConstructor));
+            Infos.Add(new MapperInfo(anyClass, source, destination, mapperContext, direction, verifyNullability, omitConstructor));
         }
         catch (Exception ex)
         {

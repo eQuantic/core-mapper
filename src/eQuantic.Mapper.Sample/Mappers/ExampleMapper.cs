@@ -1,4 +1,5 @@
 using eQuantic.Mapper.Attributes;
+using eQuantic.Mapper.Enums;
 using eQuantic.Mapper.Sample.Models;
 
 namespace eQuantic.Mapper.Sample.Mappers;
@@ -11,6 +12,12 @@ public partial class ExampleMapper : IMapper
         OnBeforeMap += (s, e) => { };
         OnAfterMap += (s, e) => { };
     }
+}
+
+[Mapper(typeof(ExampleA), typeof(ExampleB), MapperDirection.Bidirectional)]
+public partial class BidirecionalExampleMapper : IMapper
+{
+    
 }
 
 [Mapper(typeof(ExampleA), typeof(ExampleB), OmitConstructor = true)]

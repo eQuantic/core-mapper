@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using eQuantic.Mapper.Enums;
 
 namespace eQuantic.Mapper.Attributes;
 
@@ -24,6 +25,8 @@ public class MapperAttribute : Attribute
     /// </summary>
     public Type? Context { get; }
     
+    public MapperDirection Direction { get; set; } = MapperDirection.Forward;
+    
     /// <summary>
     /// Gets or sets a value indicating whether to verify nullability during mapping.
     /// </summary>
@@ -43,6 +46,12 @@ public class MapperAttribute : Attribute
     {
         SourceType = sourceType;
         DestinationType = destinationType;
+    }
+
+    public MapperAttribute(Type sourceType, Type destinationType, MapperDirection direction)
+        : this(sourceType, destinationType)
+    {
+        Direction = direction;
     }
     
     /// <summary>

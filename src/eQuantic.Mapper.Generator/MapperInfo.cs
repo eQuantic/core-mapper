@@ -10,6 +10,7 @@ internal class MapperInfo(
     INamedTypeSymbol sourceClass,
     INamedTypeSymbol destinationClass,
     INamedTypeSymbol? contextClass,
+    uint mapperDirection,
     bool verifyNullability,
     bool omitConstructor)
 {
@@ -18,6 +19,7 @@ internal class MapperInfo(
     public INamedTypeSymbol SourceClass { get; } = sourceClass;
     public INamedTypeSymbol DestinationClass { get; } = destinationClass;
     public INamedTypeSymbol? ContextClass { get; } = contextClass;
+    public uint MapperDirection { get; } = mapperDirection;
     public bool VerifyNullability { get; } = verifyNullability;
     public bool OmitConstructor { get; } = omitConstructor;
 
