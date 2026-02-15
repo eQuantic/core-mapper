@@ -3,9 +3,16 @@
 /// <summary>
 /// Interface for any mapper that can handle both synchronous and asynchronous mapping operations.
 /// </summary>
+public interface IAnyMapper : IAsyncMapper
+{
+}
+
+/// <summary>
+/// Interface for any mapper that can handle both synchronous and asynchronous mapping operations.
+/// </summary>
 /// <typeparam name="TSource">The type of the source.</typeparam>
 /// <typeparam name="TDestination">The type of the destination.</typeparam>
-public interface IAnyMapper<in TSource, TDestination> : IMapper<TSource, TDestination>, IAsyncMapper<TSource, TDestination>
+public interface IAnyMapper<in TSource, TDestination> : IAnyMapper, IMapper<TSource, TDestination>, IAsyncMapper<TSource, TDestination>
 {
     
 }

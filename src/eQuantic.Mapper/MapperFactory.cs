@@ -59,6 +59,93 @@ public class MapperFactory : IMapperFactory
     }
 
     /// <summary>
+    /// Gets the mapper.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <returns>The mapper</returns>
+    public IMapper GetMapper(Type sourceType, Type destinationType)
+    {
+        var type = typeof(IMapper<,>).MakeGenericType(sourceType, destinationType);
+        var service = _serviceProvider.GetService(type);
+        if (service == null)
+            throw new MapperNotFoundException();
+
+        return (IMapper)service;
+    }
+
+    /// <summary>
+    /// Tries to get the mapper.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="mapper">The mapper instance if found, otherwise null.</param>
+    /// <returns>True if the mapper was found, otherwise false.</returns>
+    public bool TryGetMapper(Type sourceType, Type destinationType, out IMapper? mapper)
+    {
+        try
+        {
+            mapper = GetMapper(sourceType, destinationType);
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Gets the mapper using the specified context
+    /// </summary>
+    /// <param name="sourceType">The source type</param>
+    /// <param name="destinationType">The destination type</param>
+    /// <param name="context">The context</param>
+    /// <returns>A mapper of source and destination and context</returns>
+    public IMapper GetMapper(Type sourceType, Type destinationType, object context)
+    {
+        var type = typeof(IMapper<,,>).MakeGenericType(sourceType, destinationType, context.GetType());
+        var service = _serviceProvider.GetService(type);
+
+        if (service == null)
+        {
+            throw new MapperNotFoundException();
+        }
+
+        var mapper = (IMapper)service;
+        var prop = mapper.GetType().GetProperty("Context");
+        if (prop != null)
+        {
+            prop.SetValue(mapper, context);
+        }
+        
+        return mapper;
+    }
+
+    /// <summary>
+    /// Tries to get the mapper using the specified context.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="context">The context.</param>
+    /// <param name="mapper">The mapper instance if found, otherwise null.</param>
+    /// <returns>True if the mapper was found, otherwise false.</returns>
+    public bool TryGetMapper(Type sourceType, Type destinationType, object context,
+        out IMapper? mapper)
+    {
+        try
+        {
+            mapper = GetMapper(sourceType, destinationType, context);
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+
+    /// <summary>
     /// Gets the mapper using the specified context
     /// </summary>
     /// <typeparam name="TSource">The source</typeparam>
@@ -130,6 +217,93 @@ public class MapperFactory : IMapperFactory
         try 
         {
             mapper = GetAsyncMapper<TSource, TDestination>();
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+    
+    /// <summary>
+    /// Gets the asynchronous mapper.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <returns>The asynchronous mapper</returns>
+    public IAsyncMapper GetAsyncMapper(Type sourceType, Type destinationType)
+    {
+        var type = typeof(IAsyncMapper<,>).MakeGenericType(sourceType, destinationType);
+        var service = _serviceProvider.GetService(type);
+        if (service == null)
+            throw new MapperNotFoundException();
+
+        return (IAsyncMapper)service;
+    }
+
+    /// <summary>
+    /// Tries to get the asynchronous mapper.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="mapper">The asynchronous mapper instance if found, otherwise null.</param>
+    /// <returns>True if the asynchronous mapper was found, otherwise false.</returns>
+    public bool TryGetAsyncMapper(Type sourceType, Type destinationType, out IAsyncMapper? mapper)
+    {
+        try
+        {
+            mapper = GetAsyncMapper(sourceType, destinationType);
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+
+    /// <summary>
+    /// Gets the asynchronous mapper using the specified context
+    /// </summary>
+    /// <param name="sourceType">The source type</param>
+    /// <param name="destinationType">The destination type</param>
+    /// <param name="context">The context</param>
+    /// <returns>A mapper of source and destination and context</returns>
+    public IAsyncMapper? GetAsyncMapper(Type sourceType, Type destinationType, object context)
+    {
+        var type = typeof(IAsyncMapper<,,>).MakeGenericType(sourceType, destinationType, context.GetType());
+        var service = _serviceProvider.GetService(type);
+
+        if (service == null)
+        {
+            throw new MapperNotFoundException();
+        }
+
+        var mapper = (IAsyncMapper)service;
+        var prop = mapper.GetType().GetProperty("Context");
+        if (prop != null)
+        {
+            prop.SetValue(mapper, context);
+        }
+        
+        return mapper;
+    }
+
+    /// <summary>
+    /// Tries to get the asynchronous mapper using the specified context.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="context">The context.</param>
+    /// <param name="mapper">The asynchronous mapper instance if found, otherwise null.</param>
+    /// <returns>True if the asynchronous mapper was found, otherwise false.</returns>
+    public bool TryGetAsyncMapper(Type sourceType, Type destinationType, object context,
+        out IAsyncMapper? mapper)
+    {
+        try
+        {
+            mapper = GetAsyncMapper(sourceType, destinationType, context);
             return true;
         }
         catch (MapperNotFoundException)
@@ -226,6 +400,50 @@ public class MapperFactory : IMapperFactory
     }
     
     /// <summary>
+    /// Gets any mapper (sync or async)
+    /// </summary>
+    /// <param name="sourceType">The source type</param>
+    /// <param name="destinationType">The destination type</param>
+    /// <returns></returns>
+    public IAnyMapper GetAnyMapper(Type sourceType, Type destinationType)
+    {
+        var mapperType = typeof(IMapper<,>).MakeGenericType(sourceType, destinationType);
+        var asyncMapperType = typeof(IAsyncMapper<,>).MakeGenericType(sourceType, destinationType);
+        
+        var mapper = _serviceProvider.GetService(mapperType);
+        var asyncMapper = _serviceProvider.GetService(asyncMapperType);
+        
+        if (mapper != null || asyncMapper != null)
+        {
+            var wrapperType = typeof(MapperWrapper<,>).MakeGenericType(sourceType, destinationType);
+            return (IAnyMapper)Activator.CreateInstance(wrapperType, mapper, asyncMapper)!;
+        }
+
+        throw new MapperNotFoundException();
+    }
+
+    /// <summary>
+    /// Tries to get any mapper (sync or async).
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="mapper">The mapper instance if found, otherwise null.</param>
+    /// <returns>True if any mapper was found, otherwise false.</returns>
+    public bool TryGetAnyMapper(Type sourceType, Type destinationType, out IAnyMapper? mapper)
+    {
+        try
+        {
+            mapper = GetAnyMapper(sourceType, destinationType);
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+    
+    /// <summary>
     /// Gets any mapper (sync or async) using the specified context
     /// </summary>
     /// <param name="context">The context</param>
@@ -263,6 +481,56 @@ public class MapperFactory : IMapperFactory
         try 
         {
             mapper = GetAnyMapper<TSource, TDestination, TContext>(context);
+            return true;
+        }
+        catch (MapperNotFoundException)
+        {
+            mapper = null;
+            return false;
+        }
+    }
+    /// <summary>
+    /// Gets any mapper (sync or async) using the specified context.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="context">The context.</param>
+    /// <returns>The mapper instance.</returns>
+    public IAnyMapper GetAnyMapper(Type sourceType, Type destinationType, object context)
+    {
+        var contextType = context.GetType();
+        var mapperType = typeof(IMapper<,,>).MakeGenericType(sourceType, destinationType, contextType);
+        var asyncMapperType = typeof(IAsyncMapper<,,>).MakeGenericType(sourceType, destinationType, contextType);
+        
+        var mapper = _serviceProvider.GetService(mapperType) ?? 
+                    _serviceProvider.GetService(typeof(IMapper<,>).MakeGenericType(sourceType, destinationType));
+        
+        var asyncMapper = _serviceProvider.GetService(asyncMapperType) ?? 
+                        _serviceProvider.GetService(typeof(IAsyncMapper<,>).MakeGenericType(sourceType, destinationType));
+
+        if (mapper != null || asyncMapper != null)
+        {
+            var wrapperType = typeof(MapperWrapper<,,>).MakeGenericType(sourceType, destinationType, contextType);
+            return (IAnyMapper)Activator.CreateInstance(wrapperType, mapper, asyncMapper, context)!;
+        }
+        
+        throw new MapperNotFoundException();
+    }
+
+    /// <summary>
+    /// Tries to get any mapper (sync or async) using the specified context.
+    /// </summary>
+    /// <param name="sourceType">The type of the source.</param>
+    /// <param name="destinationType">The type of the destination.</param>
+    /// <param name="context">The context.</param>
+    /// <param name="mapper">The mapper instance if found, otherwise null.</param>
+    /// <returns>True if any mapper was found, otherwise false.</returns>
+    public bool TryGetAnyMapper(Type sourceType, Type destinationType, object context,
+        out IAnyMapper? mapper)
+    {
+        try
+        {
+            mapper = GetAnyMapper(sourceType, destinationType, context);
             return true;
         }
         catch (MapperNotFoundException)
