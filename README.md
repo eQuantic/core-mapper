@@ -62,11 +62,11 @@ public class UserSource
 // Destination model with aggregation
 public class UserDestination
 {
-    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) }, 
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) },
              MapperPropertyAggregation.ConcatenateWithSpace)]
     public string FullName { get; set; } = string.Empty;
 
-    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.Salary), nameof(UserSource.Bonus) }, 
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.Salary), nameof(UserSource.Bonus) },
              MapperPropertyAggregation.Sum)]
     public decimal TotalIncome { get; set; }
 
@@ -100,6 +100,23 @@ app.MapGet("/users/{id}", async (int id, IMapperFactory mapperFactory) =>
 app.Run();
 ```
 
+### Dynamic Mapping (Non-Generic)
+
+If you need to resolve mappers at runtime where types are not known at compile time, you can use the non-generic methods and extensions:
+
+```csharp
+// Get mapper using Type instances
+var source = new UserSource { ... };
+var mapper = mapperFactory.GetAnyMapper(source.GetType(), typeof(UserDestination));
+
+// Map using object (extension method)
+var result = mapper.Map((object)source);
+
+// Or async
+var asyncMapper = mapperFactory.GetAsyncMapper(source.GetType(), typeof(UserDestination));
+var asyncResult = await asyncMapper.MapAsync((object)source);
+```
+
 ## 🔧 Advanced Features
 
 ### Property Aggregation
@@ -108,20 +125,20 @@ The `MapFromAttribute` supports multiple aggregation types for combining source 
 
 #### Available Aggregation Types
 
-| Aggregation | Description | Example |
-|------------|-------------|---------|
-| `None` | No aggregation (default) | Simple property mapping |
-| `Concatenate` | Join without separator | "JohnDoe" |
-| `ConcatenateWithSpace` | Join with space | "John Doe" |
-| `ConcatenateWithComma` | Join with comma | "John, Doe" |
-| `ConcatenateWithSeparator` | Join with custom separator | "John-Doe" |
-| `Sum` | Numeric sum | 5000 + 1000 = 6000 |
-| `Max` | Maximum value | Max(5000, 1000) = 5000 |
-| `Min` | Minimum value | Min(5000, 1000) = 1000 |
-| `Average` | Average value | (5000 + 1000) / 2 = 3000 |
-| `FirstNonEmpty` | First non-null/empty value | "John" |
-| `LastNonEmpty` | Last non-null/empty value | "Doe" |
-| `Count` | Count of non-null values | 2 |
+| Aggregation                | Description                | Example                  |
+| -------------------------- | -------------------------- | ------------------------ |
+| `None`                     | No aggregation (default)   | Simple property mapping  |
+| `Concatenate`              | Join without separator     | "JohnDoe"                |
+| `ConcatenateWithSpace`     | Join with space            | "John Doe"               |
+| `ConcatenateWithComma`     | Join with comma            | "John, Doe"              |
+| `ConcatenateWithSeparator` | Join with custom separator | "John-Doe"               |
+| `Sum`                      | Numeric sum                | 5000 + 1000 = 6000       |
+| `Max`                      | Maximum value              | Max(5000, 1000) = 5000   |
+| `Min`                      | Minimum value              | Min(5000, 1000) = 1000   |
+| `Average`                  | Average value              | (5000 + 1000) / 2 = 3000 |
+| `FirstNonEmpty`            | First non-null/empty value | "John"                   |
+| `LastNonEmpty`             | Last non-null/empty value  | "Doe"                    |
+| `Count`                    | Count of non-null values   | 2                        |
 
 ### Complex Aggregation Examples
 
@@ -143,44 +160,44 @@ public class PersonSource
 public class PersonDestination
 {
     // String concatenation with space
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName) },
              MapperPropertyAggregation.ConcatenateWithSpace)]
     public string FullName { get; set; } = string.Empty;
 
     // Custom separator concatenation
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.Department), nameof(PersonSource.Position) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.Department), nameof(PersonSource.Position) },
              MapperPropertyAggregation.ConcatenateWithSeparator, " - ")]
     public string JobTitle { get; set; } = string.Empty;
 
     // Numeric aggregation - Sum
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) },
              MapperPropertyAggregation.Sum)]
     public decimal TotalIncome { get; set; }
 
     // Numeric aggregation - Average
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus), nameof(PersonSource.Commission) },
              MapperPropertyAggregation.Average)]
     public decimal AverageIncome { get; set; }
 
     // Get maximum value
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.Salary), nameof(PersonSource.Bonus) },
              MapperPropertyAggregation.Max)]
     public decimal HighestPayComponent { get; set; }
 
     // Count non-null fields
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.Department), nameof(PersonSource.Position) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.Department), nameof(PersonSource.Position) },
              MapperPropertyAggregation.Count)]
     public int NonNullFieldsCount { get; set; }
 
     // First non-empty value
-    [MapFrom(typeof(PersonSource), 
-             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName), nameof(PersonSource.MiddleName) }, 
+    [MapFrom(typeof(PersonSource),
+             new[] { nameof(PersonSource.FirstName), nameof(PersonSource.LastName), nameof(PersonSource.MiddleName) },
              MapperPropertyAggregation.FirstNonEmpty)]
     public string? PreferredName { get; set; }
 }
@@ -297,11 +314,11 @@ var source = biMapper.Map(userDestination);
 
 #### Direction Options
 
-| Direction | Description | Generated Interfaces |
-|-----------|-------------|---------------------|
-| `Forward` | Maps from source to destination (default) | `IMapper<TSource, TDestination>` |
-| `Reverse` | Maps from destination to source | `IMapper<TDestination, TSource>` |
-| `Bidirectional` | Maps in both directions | `IMapper<TSource, TDestination>` and `IMapper<TDestination, TSource>` |
+| Direction       | Description                               | Generated Interfaces                                                  |
+| --------------- | ----------------------------------------- | --------------------------------------------------------------------- |
+| `Forward`       | Maps from source to destination (default) | `IMapper<TSource, TDestination>`                                      |
+| `Reverse`       | Maps from destination to source           | `IMapper<TDestination, TSource>`                                      |
+| `Bidirectional` | Maps in both directions                   | `IMapper<TSource, TDestination>` and `IMapper<TDestination, TSource>` |
 
 #### Bidirectional with Context
 
@@ -316,7 +333,7 @@ public partial class BidirectionalContextMapper : IMapper
         {
             // Logic for forward mapping
         };
-        
+
         OnBeforeReverseMap += (sender, args) =>
         {
             // Logic for reverse mapping
@@ -337,7 +354,7 @@ public partial class CustomConstructorMapper : IMapper
     {
         MapperFactory = mapperFactory;
         _logger = logger;
-        
+
         OnAfterMap += (sender, args) =>
         {
             _logger.LogInformation("Mapped user: {FullName}", args.Destination.FullName);
@@ -369,17 +386,17 @@ public class UserDestination
 {
     public string FirstName { get; set; } = string.Empty;
     public string LastName { get; set; } = string.Empty;
-    
+
     // Map email only if IsEmailVisible is true
     [MapFrom(typeof(UserSource), nameof(UserSource.Email))]
     [MapWhen(nameof(UserSource.IsEmailVisible))]
     public string? PublicEmail { get; set; }
-    
+
     // Map phone only if user has premium account
     [MapFrom(typeof(UserSource), nameof(UserSource.PhoneNumber))]
     [MapWhen(nameof(UserSource.HasPremiumAccount))]
     public string? Phone { get; set; }
-    
+
     // Map age only if adult
     [MapFrom(typeof(UserSource), nameof(UserSource.Age))]
     [MapWhen("source.Age >= 18", true)]
@@ -405,14 +422,14 @@ public class UserDestination
     [MapFrom(typeof(UserSource), nameof(UserSource.Salary))]
     [MapWhen("Context?.IncludeSensitiveData == true", true)]
     public decimal? Salary { get; set; }
-    
+
     // Map sensitive data only if context user is admin
     [MapFrom(typeof(UserSource), nameof(UserSource.SensitiveData))]
     [MapWhen("Context?.UserRole == \"Admin\"", true)]
     public string? RestrictedInfo { get; set; }
-    
+
     // Conditional aggregation - show full name only if contact info is allowed
-    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) }, 
+    [MapFrom(typeof(UserSource), new[] { nameof(UserSource.FirstName), nameof(UserSource.LastName) },
              MapperPropertyAggregation.ConcatenateWithSpace)]
     [MapWhen("Context?.ShowContactInfo == true", true)]
     public string? FullName { get; set; }
@@ -438,13 +455,14 @@ public partial class ConditionalUserMapper : IMapper
 
 #### Conditional Mapping Options
 
-| Condition Type | Syntax | Example | Description |
-|---------------|--------|---------|-------------|
-| **Property Name** | `[MapWhen("PropertyName")]` | `[MapWhen("IsActive")]` | Maps when boolean property is true |
-| **Expression** | `[MapWhen("expression", true)]` | `[MapWhen("source.Age >= 18", true)]` | Maps when C# expression evaluates to true |
-| **Context Expression** | `[MapWhen("Context?.Property == value", true)]` | `[MapWhen("Context?.UserRole == \"Admin\"", true)]` | Maps based on context conditions |
+| Condition Type         | Syntax                                          | Example                                             | Description                               |
+| ---------------------- | ----------------------------------------------- | --------------------------------------------------- | ----------------------------------------- |
+| **Property Name**      | `[MapWhen("PropertyName")]`                     | `[MapWhen("IsActive")]`                             | Maps when boolean property is true        |
+| **Expression**         | `[MapWhen("expression", true)]`                 | `[MapWhen("source.Age >= 18", true)]`               | Maps when C# expression evaluates to true |
+| **Context Expression** | `[MapWhen("Context?.Property == value", true)]` | `[MapWhen("Context?.UserRole == \"Admin\"", true)]` | Maps based on context conditions          |
 
 **Key Features:**
+
 - **Smart Context Detection**: Context references are only generated for mappers that have a context type
 - **Compile-Time Safety**: Invalid expressions result in compilation errors
 - **Zero Runtime Cost**: All conditions are evaluated at compile time where possible
@@ -459,17 +477,17 @@ public virtual PersonDestination? Map(PersonSource? source, PersonDestination? d
 {
     if (source == null) return null;
     if (destination == null) return Map(source);
-    
+
     InvokeHandler(OnBeforeMap, new MapEventArgs<PersonSource, PersonDestination>(source, destination));
 
     destination.FullName = string.Join(" ", new object?[] { source.FirstName, source.LastName }
         .Where(x => x != null && !string.IsNullOrEmpty(x.ToString()))
         .Select(x => x.ToString()));
-        
+
     destination.JobTitle = string.Join(" - ", new object?[] { source.Department, source.Position }
         .Where(x => x != null && !string.IsNullOrEmpty(x.ToString()))
         .Select(x => x.ToString()));
-        
+
     destination.TotalIncome = new[] { source.Salary, source.Bonus, source.Commission }.Sum();
     destination.AverageIncome = new[] { source.Salary, source.Bonus, source.Commission }.Average();
     destination.HighestPayComponent = new[] { source.Salary, source.Bonus }.Max();
@@ -502,12 +520,13 @@ For debugging the source generator during development:
 ```csharp
 #if DEBUG
     SpinWait.SpinUntil(() => Debugger.IsAttached);
-#endif 
+#endif
 ```
 
 ## 📊 Performance
 
 eQuantic.Mapper generates highly optimized code with:
+
 - **Zero reflection** - All mapping logic is compile-time generated
 - **Minimal allocations** - Efficient object creation and property assignment
 - **Type safety** - Full compile-time type checking
