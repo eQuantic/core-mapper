@@ -34,7 +34,7 @@ public class MapperExtensionsTests
         var source = new ExampleA { Name = "Test" };
         
         // This uses the extension method
-        var result = mapper.Map((object)source);
+        var result = mapper.InvokeMap((object)source);
         
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<ExampleB>());
@@ -49,7 +49,7 @@ public class MapperExtensionsTests
         var destination = new ExampleB { Name = "Original" };
         
         // This uses the extension method
-        var result = mapper.Map((object)source, (object)destination);
+        var result = mapper.InvokeMap((object)source, (object)destination);
         
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.SameAs(destination));
@@ -63,7 +63,7 @@ public class MapperExtensionsTests
         var source = new ExampleA { Name = "AsyncTest" };
         
         // This uses the extension method on IAsyncMapper interface (IAnyMapper inherits it)
-        var result = await mapper.MapAsync((object)source);
+        var result = await mapper.InvokeMapAsync((object)source);
         
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.InstanceOf<ExampleB>());
@@ -78,7 +78,7 @@ public class MapperExtensionsTests
         var destination = new ExampleB { Name = "Original" };
         
         // This uses the extension method
-        var result = await mapper.MapAsync((object)source, (object)destination);
+        var result = await mapper.InvokeMapAsync((object)source, (object)destination);
         
         Assert.That(result, Is.Not.Null);
         Assert.That(result, Is.SameAs(destination));
@@ -92,6 +92,6 @@ public class MapperExtensionsTests
         var mapper = _factory.GetMapper(typeof(ExampleA), typeof(ExampleB));
         
         // Try to map object of type string (which A is not assignable from)
-        Assert.Throws<InvalidOperationException>(() => mapper.Map("SomeString"));
+        Assert.Throws<InvalidOperationException>(() => mapper.InvokeMap("SomeString"));
     }
 }

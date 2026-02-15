@@ -7,7 +7,7 @@ public static class MapperExtensions
 {
     private static readonly ConcurrentDictionary<(Type, Type), Type?> InterfaceCache = new();
 
-    public static object? Map(this IMapper mapper, object? source)
+    public static object? InvokeMap(this IMapper mapper, object? source)
     {
         if (source == null) return null;
 
@@ -24,10 +24,10 @@ public static class MapperExtensions
         return mapMethod?.Invoke(mapper, new[] { source });
     }
 
-    public static object? Map(this IMapper mapper, object? source, object? destination)
+    public static object? InvokeMap(this IMapper mapper, object? source, object? destination)
     {
         if (source == null) return null;
-        if (destination == null) return Map(mapper, source);
+        if (destination == null) return mapper.InvokeMap(source);
 
         var sourceType = source.GetType();
         var destinationType = destination.GetType();
@@ -44,7 +44,7 @@ public static class MapperExtensions
         return mapMethod?.Invoke(mapper, new[] { source, destination });
     }
 
-    public static async Task<object?> MapAsync(this IAsyncMapper mapper, object? source, CancellationToken cancellationToken = default)
+    public static async Task<object?> InvokeMapAsync(this IAsyncMapper mapper, object? source, CancellationToken cancellationToken = default)
     {
         if (source == null) return null;
 
@@ -68,10 +68,10 @@ public static class MapperExtensions
         return resultProperty?.GetValue(task);
     }
 
-    public static async Task<object?> MapAsync(this IAsyncMapper mapper, object? source, object? destination, CancellationToken cancellationToken = default)
+    public static async Task<object?> InvokeMapAsync(this IAsyncMapper mapper, object? source, object? destination, CancellationToken cancellationToken = default)
     {
         if (source == null) return null;
-        if (destination == null) return await MapAsync(mapper, source, cancellationToken);
+        if (destination == null) return await mapper.InvokeMapAsync(source, cancellationToken);
 
         var sourceType = source.GetType();
         var destinationType = destination.GetType();
